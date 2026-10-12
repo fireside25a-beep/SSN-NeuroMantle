@@ -1,0 +1,1 @@
+(fn main (argc argv) (while 1 (return 0)) (return 1))

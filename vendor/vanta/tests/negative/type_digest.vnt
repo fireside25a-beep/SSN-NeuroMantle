@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  (let d (domain-new 0 64))
+  (sha256-free d)
+  (return 0))

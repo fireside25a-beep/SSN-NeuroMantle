@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  ; Fresh process must start with the explicit Vanta binary64 control word.
+  (assert (== (f64-env) 8064))
+  (return 0))

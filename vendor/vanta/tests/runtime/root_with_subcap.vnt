@@ -1,0 +1,5 @@
+(fn main (argc argv)
+  (let d (domain-new 0 64))
+  (let p (mem-new 16 d 7))
+  (let q (mem-sub p 0 8))
+  (return (mem-free p)))

@@ -1,0 +1,8 @@
+(fn probe (take)
+  (if take (block (let x 45)))
+  (return x))
+
+(fn main (argc argv)
+  (if (!= (call probe 1) 45) (block (return 1)))
+  (if (!= (call probe 0) 0) (block (return 2)))
+  (return 0))

@@ -1,0 +1,5 @@
+(fn main (argc argv)
+(let d (domain-new 0 4096))
+(let f (fabric-new))
+  (fabric-link f d d 0)
+  (return 0))

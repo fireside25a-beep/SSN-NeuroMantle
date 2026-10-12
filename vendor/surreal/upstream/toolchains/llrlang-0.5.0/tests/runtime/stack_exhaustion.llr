@@ -1,0 +1,2 @@
+(fn down (n) (return (+ 1 (call down (+ n 1)))))
+(fn main (argc argv) (return (call down 0)))

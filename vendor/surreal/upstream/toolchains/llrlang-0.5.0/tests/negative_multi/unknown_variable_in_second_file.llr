@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  (let total 0)
+  (call llr_print_i64 total)
+  (return (call llr_strlen missing)))

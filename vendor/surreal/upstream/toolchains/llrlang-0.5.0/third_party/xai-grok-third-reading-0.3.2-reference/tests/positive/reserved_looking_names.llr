@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  (let if 4)
+  (let fn 5)
+  (return (+ if fn)))

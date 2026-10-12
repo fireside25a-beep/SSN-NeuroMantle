@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="290" viewBox="0 0 1200 290" role="img" aria-labelledby="title desc">
+  <title id="title">LLRLANG bootstrap and oracle pipeline</title>
+  <desc id="desc">The C stage-zero seed produces stage 1, stage 1 reproduces stage 2, and the independent interpreter checks the language semantics.</desc>
+  <defs>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="0.5" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#34D399"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12Z" fill="#64748B"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="290" rx="22" fill="#0B1020"/>
+  <text x="52" y="50" fill="#F8FAFC" font-family="Inter, system-ui, sans-serif" font-size="24" font-weight="800">Bootstrap trust chain</text>
+  <text x="52" y="79" fill="#94A3B8" font-family="Inter, system-ui, sans-serif" font-size="15">Source-first bootstrap, byte identity, and an independent semantic oracle.</text>
+
+  <g font-family="Inter, system-ui, sans-serif">
+    <g transform="translate(52 120)">
+      <rect width="220" height="92" rx="16" fill="#12172A" stroke="#8B5CF6" stroke-width="2"/>
+      <text x="110" y="36" text-anchor="middle" fill="#DDD6FE" font-size="18" font-weight="800">Stage 0</text>
+      <text x="110" y="62" text-anchor="middle" fill="#A78BFA" font-size="14">C bootstrap seed</text>
+    </g>
+    <path d="M282 166H362" stroke="#64748B" stroke-width="3" marker-end="url(#arrow)"/>
+    <g transform="translate(378 120)">
+      <rect width="220" height="92" rx="16" fill="#101D2A" stroke="#22D3EE" stroke-width="2"/>
+      <text x="110" y="36" text-anchor="middle" fill="#CFFAFE" font-size="18" font-weight="800">Stage 1</text>
+      <text x="110" y="62" text-anchor="middle" fill="#67E8F9" font-size="14">native llrc</text>
+    </g>
+    <path d="M608 166H688" stroke="#64748B" stroke-width="3" marker-end="url(#arrow)"/>
+    <g transform="translate(704 120)">
+      <rect width="220" height="92" rx="16" fill="#10251F" stroke="#34D399" stroke-width="2"/>
+      <text x="110" y="36" text-anchor="middle" fill="#D1FAE5" font-size="18" font-weight="800">Stage 2</text>
+      <text x="110" y="62" text-anchor="middle" fill="#6EE7B7" font-size="14">byte-identical rebuild</text>
+    </g>
+    <g transform="translate(957 106)">
+      <rect width="191" height="120" rx="16" fill="#171827" stroke="url(#accent)" stroke-width="2"/>
+      <text x="95.5" y="37" text-anchor="middle" fill="#F8FAFC" font-size="17" font-weight="800">Oracle</text>
+      <text x="95.5" y="64" text-anchor="middle" fill="#CBD5E1" font-size="13">reference/llri.py</text>
+      <text x="95.5" y="88" text-anchor="middle" fill="#94A3B8" font-size="12">independent semantic</text>
+      <text x="95.5" y="105" text-anchor="middle" fill="#94A3B8" font-size="12">execution path</text>
+    </g>
+    <path d="M924 166H947" stroke="#64748B" stroke-width="3" marker-end="url(#arrow)"/>
+  </g>
+
+  <text x="52" y="254" fill="#94A3B8" font-family="Inter, system-ui, sans-serif" font-size="14">stage 1 == stage 2 byte-for-byte • seed/self cross-check • oracle/native output and exit-status comparison</text>
+</svg>

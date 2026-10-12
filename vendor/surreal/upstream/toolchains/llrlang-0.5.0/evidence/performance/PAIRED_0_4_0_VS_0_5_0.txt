@@ -1,0 +1,17 @@
+LLRLANG_PAIRED_PERFORMANCE_GATE
+guard_ratio=1.03
+case=normal_affine_source
+baseline_0.4.0_median_of_batch_medians_ms=0.275957
+candidate_0.5.0_median_of_batch_medians_ms=0.274875
+ratio_0.5_over_0.4=0.996079
+baseline_batch_medians_ms=0.275957,0.287224,0.284029,0.273143,0.281806,0.258491,0.259102,0.278952,0.275146,0.275457,0.277039
+candidate_batch_medians_ms=0.275787,0.268757,0.277069,0.277730,0.270880,0.260074,0.265271,0.274875,0.270359,0.276047,0.283698
+result=PASS
+case=self_compiler_source
+baseline_0.4.0_median_of_batch_medians_ms=4.902575
+candidate_0.5.0_median_of_batch_medians_ms=5.012897
+ratio_0.5_over_0.4=1.022503
+baseline_batch_medians_ms=4.892285,4.902575,4.888585,4.859451,4.834414,5.137897,4.853763,5.041190,4.912159,4.904438,4.981682,5.018797,4.906110,4.886152,4.834424
+candidate_batch_medians_ms=5.021190,4.953871,4.907302,5.012897,4.917728,5.065005,4.951817,5.038325,5.052457,5.050274,5.048401,5.021330,4.923756,4.956604,4.894894
+result=PASS
+PAIRED_PERFORMANCE_GATE_PASS

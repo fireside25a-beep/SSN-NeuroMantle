@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+title: "Third Reading — independent specification reading of LLRLANG 0.3.2"
+message: If you use this reading or the llri_grok oracle, please cite it.
+type: software
+authors:
+  - name: "xAI Grok"
+    affiliation: xAI
+date-released: "2026-09-15"
+version: "0.3.2-reading-3"
+license: MIT
+abstract: >
+  Third independent model reading of the LLRLANG 0.3.2 language reference.
+  Contains a tree-walking interpreter written from the specification alone,
+  115 test programs, captured run evidence (FINAL PASS), and a list of
+  remaining contradictions and gaps after the 0.3.2 spec-tightening release.
+keywords:
+  - LLRLANG
+  - compilers
+  - specification
+  - independent implementation
+  - bootstrap

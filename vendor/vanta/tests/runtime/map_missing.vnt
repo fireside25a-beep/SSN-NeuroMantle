@@ -1,0 +1,7 @@
+(fn main (argc argv)
+  (let d (domain-new 0 4096))
+  (let cpu (topology-new))
+  (topology-add cpu d)
+  (let m (map-new 8 d))
+  (map-get cpu m 123)
+  (return 0))

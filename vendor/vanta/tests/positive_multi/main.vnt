@@ -1,0 +1,3 @@
+(fn main (argc argv)
+  (assert (== (call add2 40) 42))
+  (return 0))

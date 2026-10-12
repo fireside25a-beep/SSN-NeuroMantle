@@ -1,0 +1,18 @@
+# Keep repository text deterministic across developer platforms.
+* text=auto
+
+*.c       text eol=lf
+*.llr     text eol=lf
+*.md      text eol=lf
+*.py      text eol=lf
+*.sh      text eol=lf
+*.txt     text eol=lf
+*.yml     text eol=lf
+*.yaml    text eol=lf
+*.cff     text eol=lf
+*.svg     text eol=lf
+Makefile  text eol=lf
+VERSION   text eol=lf
+
+# Prebuilt compiler is an ELF binary and must never receive text conversion.
+/bin/llrc-linux-x86_64 binary

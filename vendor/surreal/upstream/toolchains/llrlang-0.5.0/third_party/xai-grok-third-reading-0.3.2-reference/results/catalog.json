@@ -1,0 +1,773 @@
+{
+  "positive": [
+    {
+      "name": "hello_write",
+      "src": "(fn main (argc argv)\n  (syscall3 1 1 \"hello from LLRLANG\\n\" 19)\n  (return 0))\n",
+      "exit": 0,
+      "stdout": [
+        104,
+        101,
+        108,
+        108,
+        111,
+        32,
+        102,
+        114,
+        111,
+        109,
+        32,
+        76,
+        76,
+        82,
+        76,
+        65,
+        78,
+        71,
+        10
+      ],
+      "notes": "syscall write of a string literal"
+    },
+    {
+      "name": "fallthrough_returns_zero",
+      "src": "(fn main (argc argv)\n  42)\n",
+      "exit": 0,
+      "stdout": [],
+      "notes": "\u00a710: body completing without return yields 0, not the last expr"
+    },
+    {
+      "name": "last_expr_discarded",
+      "src": "(fn main (argc argv)\n  7\n  8\n  9)\n",
+      "exit": 0,
+      "stdout": [],
+      "notes": "non-return body expressions are evaluated and discarded"
+    },
+    {
+      "name": "explicit_return",
+      "src": "(fn main (argc argv)\n  (return 42))\n",
+      "exit": 42,
+      "stdout": [],
+      "notes": ""
+    },
+    {
+      "name": "exit_status_low_byte",
+      "src": "(fn main (argc argv)\n  (return 258))\n",
+      "exit": 2,
+      "stdout": [],
+      "notes": "\u00a78 low 8 bits; 258 -> 2"
+    },
+    {
+      "name": "exit_status_negative",
+      "src": "(fn main (argc argv)\n  (return -1))\n",
+      "exit": 255,
+      "stdout": [],
+      "notes": "(return -1) exits 255"
+    },
+    {
+      "name": "leading_zeros",
+      "src": "(fn main (argc argv)\n  (return 007))\n",
+      "exit": 7,
+      "stdout": [],
+      "notes": "007 is 7"
+    },
+    {
+      "name": "minus_zero",
+      "src": "(fn main (argc argv)\n  (return -0))\n",
+      "exit": 0,
+      "stdout": [],
+      "notes": "-0 is 0"
+    },
+    {
+      "name": "int64_min_literal",
+      "src": "(fn main (argc argv)\n  (return (>> -9223372036854775808 63)))\n",
+      "exit": 255,
+      "stdout": [],
+      "notes": "INT64_MIN is a single valid literal; SAR 63 -> -1 -> exit 255"
+    },
+    {
+      "name": "int64_max_literal",
+      "src": "(fn main (argc argv)\n  (return (- 9223372036854775807 9223372036854775800)))\n",
+      "exit": 7,
+      "stdout": [],
+      "notes": ""
+    },
+    {
+      "name": "trunc_div_neg",
+      "src": "(fn main (argc argv)\n  (return (/ -7 2)))\n",
+      "exit": 253,
+      "stdout": [],
+      "notes": "trunc toward 0: -3, low 8 of -3 is 253"
+    },
+    {
+      "name": "trunc_mod_neg",
+      "src": "(fn main (argc argv)\n  (return (% -7 2)))\n",
+      "exit": 255,
+      "stdout": [],
+      "notes": "remainder sign of dividend: -1"
+    },
+    {
+      "name": "div_pos_neg",
+      "src": "(fn main (argc argv)\n  (return (/ 7 -2)))\n",
+      "exit": 253,
+      "stdout": [],
+      "notes": "7/-2 = -3"
+    },
+    {
+      "name": "mod_pos_neg",
+      "src": "(fn main (argc argv)\n  (return (% 7 -2)))\n",
+      "exit": 1,
+      "stdout": [],
+      "notes": "7 % -2 = 1 (sign of dividend)"
+    },
+    {
+      "name": "shl_no_trap",
+      "src": "(fn main (argc argv)\n  (return (>> (<< 3 63) 63)))\n",
+      "exit": 255,
+      "stdout": [],
+      "notes": "(<< 3 63) is INT64_MIN; SAR 63 is -1"
+    },
+    {
+      "name": "logical_not",
+      "src": "(fn main (argc argv)\n  (return (+ (* 10 (! 0)) (! 5))))\n",
+      "exit": 10,
+      "stdout": [],
+      "notes": "! is logical, not bitwise; (! 0)=1, (! 5)=0"
+    },
+    {
+      "name": "bitwise_not_via_xor",
+      "src": "(fn main (argc argv)\n  (return (& 255 (^ 0 -1))))\n",
+      "exit": 255,
+      "stdout": [],
+      "notes": "no ~ operator; (^ x -1) is bitwise complement"
+    },
+    {
+      "name": "comparisons_are_01",
+      "src": "(fn main (argc argv)\n  (return (+ (+ (+ (== 1 1) (!= 1 2)) (< 1 2)) (>= 2 2))))\n",
+      "exit": 4,
+      "stdout": [],
+      "notes": ""
+    },
+    {
+      "name": "else_less_if_taken",
+      "src": "(fn main (argc argv)\n  (return (if 1 (block 7))))\n",
+      "exit": 7,
+      "stdout": [],
+      "notes": "else-less if with nonzero cond yields the block"
+    },
+    {
+      "name": "else_less_if_untaken",
+      "src": "(fn main (argc argv)\n  (return (if 0 (block 7))))\n",
+      "exit": 0,
+      "stdout": [],
+      "notes": "else-less if with zero cond yields 0"
+    },
+    {
+      "name": "if_else",
+      "src": "(fn main (argc argv)\n  (return (if 0 (block 1) (block 2))))\n",
+      "exit": 2,
+      "stdout": [],
+      "notes": ""
+    },
+    {
+      "name": "while_yields_zero",
+      "src": "(fn main (argc argv)\n  (let n 3)\n  (let s 0)\n  (while n (block\n    (set s (+ s n))\n    (set n (- n 1))))\n  (return (+ (* 100 s) (while 0 (block 1)))))\n",
+      "exit": 88,
+      "stdout": [],
+      "notes": "while yields 0; 3+2+1=6 so 600, low 8 bits 88"
+    },
+    {
+      "name": "let_set_yield",
+      "src": "(fn main (argc argv)\n  (return (+ (let a 3) (set a 4))))\n",
+      "exit": 7,
+      "stdout": [],
+      "notes": "let and set yield the assigned value"
+    },
+    {
+      "name": "params_are_locals",
+      "src": "(fn bump (x)\n  (set x (+ x 1))\n  (return x))\n(fn main (argc argv)\n  (return (call bump 8)))\n",
+      "exit": 9,
+      "stdout": [],
+      "notes": "parameters may be assigned with set; assignment is local to the frame"
+    },
+    {
+      "name": "forward_call",
+      "src": "(fn main (argc argv)\n  (return (call later 6)))\n(fn later (n)\n  (return (+ n 1)))\n",
+      "exit": 7,
+      "stdout": [],
+      "notes": "function inventory before evaluation; forward calls work"
+    },
+    {
+      "name": "recursion_factorial",
+      "src": "(fn factorial (n)\n  (if (<= n 1)\n    (block (return 1))\n    (block (return (* n (call factorial (- n 1)))))))\n(fn main (argc argv)\n  (return (- (call factorial 5) 120)))\n",
+      "exit": 0,
+      "stdout": [],
+      "notes": "language snapshot from the project README"
+    },
+    {
+      "name": "main_is_callable",
+      "src": "(fn main (argc argv)\n  (if argc\n    (block (return 3))\n    (block (return 9))))\n",
+      "exit": 3,
+      "stdout": [],
+      "notes": "argc is at least 1 so taken branch; main is ordinary"
+    },
+    {
+      "name": "let_in_loop_reassigns",
+      "src": "(fn main (argc argv)\n  (let i 0)\n  (let last 0)\n  (while (< i 3) (block\n    (let x i)\n    (set last x)\n    (set i (+ i 1))))\n  (return last))\n",
+      "exit": 2,
+      "stdout": [],
+      "notes": "let inside loop declared once, re-executed assigns"
+    },
+    {
+      "name": "block_does_not_scope",
+      "src": "(fn main (argc argv)\n  (block (let x 11))\n  (return x))\n",
+      "exit": 11,
+      "stdout": [],
+      "notes": "locals are function-scoped, not block-scoped"
+    },
+    {
+      "name": "function_named_plus",
+      "src": "(fn + (a b)\n  (return 99))\n(fn main (argc argv)\n  (return (+ (call + 1 2) 1)))\n",
+      "exit": 100,
+      "stdout": [],
+      "notes": "builtin (+) and function named + are different namespaces; (call +) vs (+)"
+    },
+    {
+      "name": "reserved_looking_names",
+      "src": "(fn main (argc argv)\n  (let if 4)\n  (let fn 5)\n  (return (+ if fn)))\n",
+      "exit": 9,
+      "stdout": [],
+      "notes": "no reserved words; if/fn are valid local names"
+    },
+    {
+      "name": "quote_delimiter",
+      "src": "(fn main (argc argv)\n  1\"AB\"2\n  (return 0))\n",
+      "exit": 0,
+      "stdout": [],
+      "notes": "1\"AB\"2 lexes as three tokens (int, string, int); body fall-through after evaluating them"
+    },
+    {
+      "name": "empty_string_truthy",
+      "src": "(fn main (argc argv)\n  (return (if \"\" (block 1) (block 0))))\n",
+      "exit": 1,
+      "stdout": [],
+      "notes": "\"\" is a pointer, hence nonzero, hence true"
+    },
+    {
+      "name": "store8_truncates_write_not_value",
+      "src": "(fn main (argc argv)\n  (let p (syscall6 9 0 64 3 34 -1 0))\n  (let y (store8 p 0 300))\n  (let b (load8 p 0))\n  (return (if (== y 300)\n    (block (if (== b 44) (block 1) (block 2)))\n    (block 3))))\n",
+      "exit": 1,
+      "stdout": [],
+      "notes": "store8 yields 300, writes 44 (300&255)"
+    },
+    {
+      "name": "load8_zero_extends",
+      "src": "(fn main (argc argv)\n  (let p (syscall6 9 0 64 3 34 -1 0))\n  (store8 p 0 255)\n  (return (load8 p 0)))\n",
+      "exit": 255,
+      "stdout": [],
+      "notes": "255, not -1"
+    },
+    {
+      "name": "ltr_eval_set",
+      "src": "(fn main (argc argv)\n  (let x 1)\n  (let y (+ (set x 10) x))\n  (return y))\n",
+      "exit": 20,
+      "stdout": [],
+      "notes": "left-to-right: set x 10 yields 10, then x is 10, sum 20"
+    },
+    {
+      "name": "untaken_if_does_not_eval",
+      "src": "(fn main (argc argv)\n  (let x 1)\n  (if 0 (block (set x (/ 1 0))) (block (set x 5)))\n  (return x))\n",
+      "exit": 5,
+      "stdout": [],
+      "notes": "untaken branch is not evaluated (would trap)"
+    },
+    {
+      "name": "bitwise_and_does_not_short_circuit",
+      "src": "(fn main (argc argv)\n  (let x 0)\n  (& (set x 1) 0)\n  (return x))\n",
+      "exit": 1,
+      "stdout": [],
+      "notes": "& evaluates both operands"
+    },
+    {
+      "name": "string_escape_newline",
+      "src": "(fn main (argc argv)\n  (syscall3 1 1 \"a\\nb\" 3)\n  (return 0))\n",
+      "exit": 0,
+      "stdout": [
+        97,
+        10,
+        98
+      ],
+      "notes": "\\n in a string is a line feed"
+    },
+    {
+      "name": "nul_inside_string",
+      "src": "(fn main (argc argv)\n  (let p \"a\\0b\")\n  (return (load8 p 2)))\n",
+      "exit": 98,
+      "stdout": [],
+      "notes": "\\0 is a NUL inside the literal; byte after it is still there"
+    },
+    {
+      "name": "call_main_from_helper",
+      "src": "(fn helper (x)\n  (return (call main 0 0)))\n(fn main (argc argv)\n  (if argc\n    (block (return (call helper 0)))\n    (block (return 7))))\n",
+      "exit": 7,
+      "stdout": [],
+      "notes": "main may be called; helper calls main with argc=0"
+    },
+    {
+      "name": "six_params",
+      "src": "(fn add6 (a b c d e f)\n  (return (+ (+ (+ (+ (+ a b) c) d) e) f)))\n(fn main (argc argv)\n  (return (call add6 1 2 3 4 5 6)))\n",
+      "exit": 21,
+      "stdout": [],
+      "notes": ""
+    },
+    {
+      "name": "cr_is_whitespace_same_line",
+      "src": "(fn main (argc argv)\n  (let a 1)\r(let b 2)\n  (return (+ a b)))\n",
+      "exit": 3,
+      "stdout": [],
+      "notes": "CR is whitespace and does not start a new line"
+    },
+    {
+      "name": "dot_is_identifier_byte",
+      "src": "(fn main (argc argv)\n  (let foo.bar 12)\n  (return foo.bar))\n",
+      "exit": 12,
+      "stdout": [],
+      "notes": "foo.bar is one identifier, not member access"
+    },
+    {
+      "name": "hex_looking_is_not_hex",
+      "src": "(fn main (argc argv)\n  (let 0x10 4)\n  (return 0x10))\n",
+      "exit": 4,
+      "stdout": [],
+      "notes": "0x10 is an identifier, not sixteen"
+    },
+    {
+      "name": "unary_minus_is_neg",
+      "src": "(fn main (argc argv)\n  (return (neg 5)))\n",
+      "exit": 251,
+      "stdout": [],
+      "notes": "(- 5) would be arity error; unary is (neg 5) -> -5 -> 251"
+    },
+    {
+      "name": "wrapping_address_add",
+      "src": "(fn main (argc argv)\n  (let p (syscall6 9 0 16 3 34 -1 0))\n  (store8 p 4 77)\n  (return (load8 (+ p 1) 3)))\n",
+      "exit": 77,
+      "stdout": [],
+      "notes": "load8 address is base+offset wrapping; here small and equal to +"
+    },
+    {
+      "name": "locals_250_with_6_params",
+      "src": "(fn f (a b c d e f)\n  (let v0 0)\n  (let v1 1)\n  (let v2 2)\n  (let v3 3)\n  (let v4 4)\n  (let v5 5)\n  (let v6 6)\n  (let v7 7)\n  (let v8 8)\n  (let v9 9)\n  (let v10 10)\n  (let v11 11)\n  (let v12 12)\n  (let v13 13)\n  (let v14 14)\n  (let v15 15)\n  (let v16 16)\n  (let v17 17)\n  (let v18 18)\n  (let v19 19)\n  (let v20 20)\n  (let v21 21)\n  (let v22 22)\n  (let v23 23)\n  (let v24 24)\n  (let v25 25)\n  (let v26 26)\n  (let v27 27)\n  (let v28 28)\n  (let v29 29)\n  (let v30 30)\n  (let v31 31)\n  (let v32 32)\n  (let v33 33)\n  (let v34 34)\n  (let v35 35)\n  (let v36 36)\n  (let v37 37)\n  (let v38 38)\n  (let v39 39)\n  (let v40 40)\n  (let v41 41)\n  (let v42 42)\n  (let v43 43)\n  (let v44 44)\n  (let v45 45)\n  (let v46 46)\n  (let v47 47)\n  (let v48 48)\n  (let v49 49)\n  (let v50 50)\n  (let v51 51)\n  (let v52 52)\n  (let v53 53)\n  (let v54 54)\n  (let v55 55)\n  (let v56 56)\n  (let v57 57)\n  (let v58 58)\n  (let v59 59)\n  (let v60 60)\n  (let v61 61)\n  (let v62 62)\n  (let v63 63)\n  (let v64 64)\n  (let v65 65)\n  (let v66 66)\n  (let v67 67)\n  (let v68 68)\n  (let v69 69)\n  (let v70 70)\n  (let v71 71)\n  (let v72 72)\n  (let v73 73)\n  (let v74 74)\n  (let v75 75)\n  (let v76 76)\n  (let v77 77)\n  (let v78 78)\n  (let v79 79)\n  (let v80 80)\n  (let v81 81)\n  (let v82 82)\n  (let v83 83)\n  (let v84 84)\n  (let v85 85)\n  (let v86 86)\n  (let v87 87)\n  (let v88 88)\n  (let v89 89)\n  (let v90 90)\n  (let v91 91)\n  (let v92 92)\n  (let v93 93)\n  (let v94 94)\n  (let v95 95)\n  (let v96 96)\n  (let v97 97)\n  (let v98 98)\n  (let v99 99)\n  (let v100 100)\n  (let v101 101)\n  (let v102 102)\n  (let v103 103)\n  (let v104 104)\n  (let v105 105)\n  (let v106 106)\n  (let v107 107)\n  (let v108 108)\n  (let v109 109)\n  (let v110 110)\n  (let v111 111)\n  (let v112 112)\n  (let v113 113)\n  (let v114 114)\n  (let v115 115)\n  (let v116 116)\n  (let v117 117)\n  (let v118 118)\n  (let v119 119)\n  (let v120 120)\n  (let v121 121)\n  (let v122 122)\n  (let v123 123)\n  (let v124 124)\n  (let v125 125)\n  (let v126 126)\n  (let v127 127)\n  (let v128 128)\n  (let v129 129)\n  (let v130 130)\n  (let v131 131)\n  (let v132 132)\n  (let v133 133)\n  (let v134 134)\n  (let v135 135)\n  (let v136 136)\n  (let v137 137)\n  (let v138 138)\n  (let v139 139)\n  (let v140 140)\n  (let v141 141)\n  (let v142 142)\n  (let v143 143)\n  (let v144 144)\n  (let v145 145)\n  (let v146 146)\n  (let v147 147)\n  (let v148 148)\n  (let v149 149)\n  (let v150 150)\n  (let v151 151)\n  (let v152 152)\n  (let v153 153)\n  (let v154 154)\n  (let v155 155)\n  (let v156 156)\n  (let v157 157)\n  (let v158 158)\n  (let v159 159)\n  (let v160 160)\n  (let v161 161)\n  (let v162 162)\n  (let v163 163)\n  (let v164 164)\n  (let v165 165)\n  (let v166 166)\n  (let v167 167)\n  (let v168 168)\n  (let v169 169)\n  (let v170 170)\n  (let v171 171)\n  (let v172 172)\n  (let v173 173)\n  (let v174 174)\n  (let v175 175)\n  (let v176 176)\n  (let v177 177)\n  (let v178 178)\n  (let v179 179)\n  (let v180 180)\n  (let v181 181)\n  (let v182 182)\n  (let v183 183)\n  (let v184 184)\n  (let v185 185)\n  (let v186 186)\n  (let v187 187)\n  (let v188 188)\n  (let v189 189)\n  (let v190 190)\n  (let v191 191)\n  (let v192 192)\n  (let v193 193)\n  (let v194 194)\n  (let v195 195)\n  (let v196 196)\n  (let v197 197)\n  (let v198 198)\n  (let v199 199)\n  (let v200 200)\n  (let v201 201)\n  (let v202 202)\n  (let v203 203)\n  (let v204 204)\n  (let v205 205)\n  (let v206 206)\n  (let v207 207)\n  (let v208 208)\n  (let v209 209)\n  (let v210 210)\n  (let v211 211)\n  (let v212 212)\n  (let v213 213)\n  (let v214 214)\n  (let v215 215)\n  (let v216 216)\n  (let v217 217)\n  (let v218 218)\n  (let v219 219)\n  (let v220 220)\n  (let v221 221)\n  (let v222 222)\n  (let v223 223)\n  (let v224 224)\n  (let v225 225)\n  (let v226 226)\n  (let v227 227)\n  (let v228 228)\n  (let v229 229)\n  (let v230 230)\n  (let v231 231)\n  (let v232 232)\n  (let v233 233)\n  (let v234 234)\n  (let v235 235)\n  (let v236 236)\n  (let v237 237)\n  (let v238 238)\n  (let v239 239)\n  (let v240 240)\n  (let v241 241)\n  (let v242 242)\n  (let v243 243)\n  (let v244 244)\n  (let v245 245)\n  (let v246 246)\n  (let v247 247)\n  (let v248 248)\n  (let v249 249)\n  (return v249))\n(fn main (argc argv)\n  (return (call f 0 0 0 0 0 0)))\n",
+      "exit": 249,
+      "stdout": [],
+      "notes": "six params + 250 lets = 256 slots, accepted"
+    },
+    {
+      "name": "nesting_depth_128",
+      "src": "(fn main (argc argv)\n  (return (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg 0))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))\n",
+      "exit": 0,
+      "stdout": [],
+      "notes": "return + 126 neg + literal = depth 128, accepted; (neg 0)=0"
+    },
+    {
+      "name": "empty_block_in_taken_if_zero_choice",
+      "src": "(fn main (argc argv)\n  (return (if 1 (block))))\n",
+      "exit": 0,
+      "stdout": [],
+      "notes": "UNSPECIFIED empty block; this oracle yields 0 (gap probe living as a positive)"
+    },
+    {
+      "name": "return_aborts_rhs",
+      "src": "(fn main (argc argv)\n  (return (+ (return 1) (/ 1 0))))\n",
+      "exit": 1,
+      "stdout": [],
+      "notes": "return exits the function immediately; RHS of + is not evaluated and must not trap"
+    },
+    {
+      "name": "argc_at_least_1",
+      "src": "(fn main (argc argv)\n  (return argc))\n",
+      "exit": 1,
+      "stdout": [],
+      "notes": ""
+    },
+    {
+      "name": "argv0_is_pointer",
+      "src": "(fn main (argc argv)\n  (return (if argv (block 1) (block 0))))\n",
+      "exit": 1,
+      "stdout": [],
+      "notes": "argv is a non-null pointer to the pointer table"
+    }
+  ],
+  "negative": [
+    {
+      "name": "plus_as_identifier_literal",
+      "src": "(fn main (argc argv)\n  (return +5))\n",
+      "substr": "unknown variable",
+      "notes": "+5 is an identifier, not a literal"
+    },
+    {
+      "name": "use_before_let",
+      "src": "(fn main (argc argv)\n  (return x)\n  (let x 1))\n",
+      "substr": "unknown variable",
+      "notes": "in scope from let onward, source order"
+    },
+    {
+      "name": "use_before_let_in_untaken_branch",
+      "src": "(fn main (argc argv)\n  (if 0 (block (return x)))\n  (let x 1)\n  (return 0))\n",
+      "substr": "unknown variable",
+      "notes": "source order, regardless of execution"
+    },
+    {
+      "name": "let_shadows_param",
+      "src": "(fn main (argc argv)\n  (let argc 1)\n  (return argc))\n",
+      "substr": "duplicate local",
+      "notes": ""
+    },
+    {
+      "name": "duplicate_let",
+      "src": "(fn main (argc argv)\n  (let x 1)\n  (block (let x 2))\n  (return x))\n",
+      "substr": "duplicate local",
+      "notes": "not block-scoped"
+    },
+    {
+      "name": "extra_if_branch",
+      "src": "(fn main (argc argv)\n  (if 1 (block 1) (block 2) (block 3)))\n",
+      "substr": "if has at most one else branch",
+      "notes": ""
+    },
+    {
+      "name": "non_block_then",
+      "src": "(fn main (argc argv)\n  (if 1 2))\n",
+      "substr": "expected (block ...)",
+      "notes": ""
+    },
+    {
+      "name": "non_block_else",
+      "src": "(fn main (argc argv)\n  (if 1 (block 2) 3))\n",
+      "substr": "expected (block ...)",
+      "notes": ""
+    },
+    {
+      "name": "non_block_while",
+      "src": "(fn main (argc argv)\n  (while 0 1)\n  (return 0))\n",
+      "substr": "expected (block ...)",
+      "notes": ""
+    },
+    {
+      "name": "return_without_expr",
+      "src": "(fn main (argc argv)\n  (return))\n",
+      "substr": "return expects one expression",
+      "notes": ""
+    },
+    {
+      "name": "nested_fn",
+      "src": "(fn main (argc argv)\n  (fn inner (x) (return x))\n  (return 0))\n",
+      "substr": "unknown form",
+      "notes": ""
+    },
+    {
+      "name": "form_head_integer",
+      "src": "(fn main (argc argv)\n  (1 2)\n  (return 0))\n",
+      "substr": "expected form name",
+      "notes": ""
+    },
+    {
+      "name": "empty_form",
+      "src": "(fn main (argc argv)\n  ()\n  (return 0))\n",
+      "substr": "expected form name",
+      "notes": "() has no head identifier \u2014 spec example is (1 2); empty is a gap this reading rejects"
+    },
+    {
+      "name": "unknown_form",
+      "src": "(fn main (argc argv)\n  (foo 1)\n  (return 0))\n",
+      "substr": "unknown form",
+      "notes": ""
+    },
+    {
+      "name": "unknown_function",
+      "src": "(fn main (argc argv)\n  (return (call missing 1)))\n",
+      "substr": "unknown function",
+      "notes": ""
+    },
+    {
+      "name": "arity_too_few",
+      "src": "(fn f (a b) (return a))\n(fn main (argc argv)\n  (return (call f 1)))\n",
+      "substr": "function arity mismatch",
+      "notes": ""
+    },
+    {
+      "name": "arity_too_many",
+      "src": "(fn f (a) (return a))\n(fn main (argc argv)\n  (return (call f 1 2)))\n",
+      "substr": "too many call arguments",
+      "notes": ""
+    },
+    {
+      "name": "duplicate_function",
+      "src": "(fn f () (return 1))\n(fn f () (return 2))\n(fn main (argc argv)\n  (return 0))\n",
+      "substr": "duplicate function",
+      "notes": ""
+    },
+    {
+      "name": "duplicate_param",
+      "src": "(fn f (x x) (return x))\n(fn main (argc argv)\n  (return 0))\n",
+      "substr": "duplicate parameter",
+      "notes": ""
+    },
+    {
+      "name": "seven_params",
+      "src": "(fn f (a b c d e f g) (return a))\n(fn main (argc argv)\n  (return 0))\n",
+      "substr": "more than 6 parameters",
+      "notes": ""
+    },
+    {
+      "name": "missing_main",
+      "src": "(fn f () (return 1))\n",
+      "substr": "missing main function",
+      "notes": ""
+    },
+    {
+      "name": "main_one_param",
+      "src": "(fn main (argc)\n  (return 0))\n",
+      "substr": "main must accept exactly (argc argv)",
+      "notes": "section 9 vs section 1 'conventionally'"
+    },
+    {
+      "name": "main_wrong_names",
+      "src": "(fn main (a b)\n  (return 0))\n",
+      "substr": "main must accept exactly (argc argv)",
+      "notes": "CONTRADICTION: \u00a71 says conventionally, \u00a79 requires these names"
+    },
+    {
+      "name": "unterminated_string",
+      "src": "(fn main (argc argv) (return \"abc)",
+      "substr": "unterminated string literal",
+      "notes": "no trailing newline: string runs to EOF"
+    },
+    {
+      "name": "bad_escape",
+      "src": "(fn main (argc argv)\n  (return \"\\x\"))\n",
+      "substr": "unsupported or bad string escape",
+      "notes": ""
+    },
+    {
+      "name": "newline_in_string",
+      "src": "(fn main (argc argv)\n  (return \"abc\ndef\"))\n",
+      "substr": "newline in string literal",
+      "notes": ""
+    },
+    {
+      "name": "integer_overflow_literal",
+      "src": "(fn main (argc argv)\n  (return 9223372036854775808))\n",
+      "substr": "integer literal overflow",
+      "notes": ""
+    },
+    {
+      "name": "integer_overflow_neg",
+      "src": "(fn main (argc argv)\n  (return -9223372036854775809))\n",
+      "substr": "integer literal overflow",
+      "notes": ""
+    },
+    {
+      "name": "binary_extra_operand",
+      "src": "(fn main (argc argv)\n  (return (+ 1 2 3)))\n",
+      "substr": "operand count",
+      "notes": ""
+    },
+    {
+      "name": "binary_missing_operand",
+      "src": "(fn main (argc argv)\n  (return (+ 1)))\n",
+      "substr": "operand count",
+      "notes": ""
+    },
+    {
+      "name": "neg_extra",
+      "src": "(fn main (argc argv)\n  (return (neg 1 2)))\n",
+      "substr": "operand count",
+      "notes": ""
+    },
+    {
+      "name": "unary_minus_form",
+      "src": "(fn main (argc argv)\n  (return (- 5)))\n",
+      "substr": "operand count",
+      "notes": "(- 5) is binary minus with one operand"
+    },
+    {
+      "name": "syscall7_unknown",
+      "src": "(fn main (argc argv)\n  (syscall7 1)\n  (return 0))\n",
+      "substr": "unknown form",
+      "notes": ""
+    },
+    {
+      "name": "syscall_arity",
+      "src": "(fn main (argc argv)\n  (syscall1 1 2 3)\n  (return 0))\n",
+      "substr": "too many syscall arguments",
+      "notes": ""
+    },
+    {
+      "name": "unbalanced_paren",
+      "src": "(fn main (argc argv)\n  (return 0)\n",
+      "substr": "unbalanced parentheses",
+      "notes": ""
+    },
+    {
+      "name": "top_level_let",
+      "src": "(let x 1)\n(fn main (argc argv)\n  (return 0))\n",
+      "substr": "top level expects (fn name (params...) ...)",
+      "notes": ""
+    },
+    {
+      "name": "if_no_then",
+      "src": "(fn main (argc argv)\n  (if 1)\n  (return 0))\n",
+      "substr": "expected (block ...)",
+      "notes": ""
+    },
+    {
+      "name": "set_unknown",
+      "src": "(fn main (argc argv)\n  (set x 1)\n  (return 0))\n",
+      "substr": "set of unknown local",
+      "notes": ""
+    },
+    {
+      "name": "let_non_ident",
+      "src": "(fn main (argc argv)\n  (let 1 2)\n  (return 0))\n",
+      "substr": "let expects identifier",
+      "notes": ""
+    },
+    {
+      "name": "call_non_ident",
+      "src": "(fn main (argc argv)\n  (return (call 1)))\n",
+      "substr": "call expects identifier",
+      "notes": ""
+    },
+    {
+      "name": "fn_name_integer",
+      "src": "(fn 1 () (return 0))\n(fn main (argc argv)\n  (return 0))\n",
+      "substr": "function name must be identifier",
+      "notes": ""
+    },
+    {
+      "name": "backslash_at_end",
+      "src": "(fn main (argc argv) (return \"abc\\)\n",
+      "substr": "unsupported or bad string escape",
+      "notes": "backslash as last byte of a literal / bad escape \u2014 both compile errors per \u00a72"
+    },
+    {
+      "name": "too_many_locals_with_params",
+      "src": "(fn f (a b c d e f)\n  (let v0 0)\n  (let v1 1)\n  (let v2 2)\n  (let v3 3)\n  (let v4 4)\n  (let v5 5)\n  (let v6 6)\n  (let v7 7)\n  (let v8 8)\n  (let v9 9)\n  (let v10 10)\n  (let v11 11)\n  (let v12 12)\n  (let v13 13)\n  (let v14 14)\n  (let v15 15)\n  (let v16 16)\n  (let v17 17)\n  (let v18 18)\n  (let v19 19)\n  (let v20 20)\n  (let v21 21)\n  (let v22 22)\n  (let v23 23)\n  (let v24 24)\n  (let v25 25)\n  (let v26 26)\n  (let v27 27)\n  (let v28 28)\n  (let v29 29)\n  (let v30 30)\n  (let v31 31)\n  (let v32 32)\n  (let v33 33)\n  (let v34 34)\n  (let v35 35)\n  (let v36 36)\n  (let v37 37)\n  (let v38 38)\n  (let v39 39)\n  (let v40 40)\n  (let v41 41)\n  (let v42 42)\n  (let v43 43)\n  (let v44 44)\n  (let v45 45)\n  (let v46 46)\n  (let v47 47)\n  (let v48 48)\n  (let v49 49)\n  (let v50 50)\n  (let v51 51)\n  (let v52 52)\n  (let v53 53)\n  (let v54 54)\n  (let v55 55)\n  (let v56 56)\n  (let v57 57)\n  (let v58 58)\n  (let v59 59)\n  (let v60 60)\n  (let v61 61)\n  (let v62 62)\n  (let v63 63)\n  (let v64 64)\n  (let v65 65)\n  (let v66 66)\n  (let v67 67)\n  (let v68 68)\n  (let v69 69)\n  (let v70 70)\n  (let v71 71)\n  (let v72 72)\n  (let v73 73)\n  (let v74 74)\n  (let v75 75)\n  (let v76 76)\n  (let v77 77)\n  (let v78 78)\n  (let v79 79)\n  (let v80 80)\n  (let v81 81)\n  (let v82 82)\n  (let v83 83)\n  (let v84 84)\n  (let v85 85)\n  (let v86 86)\n  (let v87 87)\n  (let v88 88)\n  (let v89 89)\n  (let v90 90)\n  (let v91 91)\n  (let v92 92)\n  (let v93 93)\n  (let v94 94)\n  (let v95 95)\n  (let v96 96)\n  (let v97 97)\n  (let v98 98)\n  (let v99 99)\n  (let v100 100)\n  (let v101 101)\n  (let v102 102)\n  (let v103 103)\n  (let v104 104)\n  (let v105 105)\n  (let v106 106)\n  (let v107 107)\n  (let v108 108)\n  (let v109 109)\n  (let v110 110)\n  (let v111 111)\n  (let v112 112)\n  (let v113 113)\n  (let v114 114)\n  (let v115 115)\n  (let v116 116)\n  (let v117 117)\n  (let v118 118)\n  (let v119 119)\n  (let v120 120)\n  (let v121 121)\n  (let v122 122)\n  (let v123 123)\n  (let v124 124)\n  (let v125 125)\n  (let v126 126)\n  (let v127 127)\n  (let v128 128)\n  (let v129 129)\n  (let v130 130)\n  (let v131 131)\n  (let v132 132)\n  (let v133 133)\n  (let v134 134)\n  (let v135 135)\n  (let v136 136)\n  (let v137 137)\n  (let v138 138)\n  (let v139 139)\n  (let v140 140)\n  (let v141 141)\n  (let v142 142)\n  (let v143 143)\n  (let v144 144)\n  (let v145 145)\n  (let v146 146)\n  (let v147 147)\n  (let v148 148)\n  (let v149 149)\n  (let v150 150)\n  (let v151 151)\n  (let v152 152)\n  (let v153 153)\n  (let v154 154)\n  (let v155 155)\n  (let v156 156)\n  (let v157 157)\n  (let v158 158)\n  (let v159 159)\n  (let v160 160)\n  (let v161 161)\n  (let v162 162)\n  (let v163 163)\n  (let v164 164)\n  (let v165 165)\n  (let v166 166)\n  (let v167 167)\n  (let v168 168)\n  (let v169 169)\n  (let v170 170)\n  (let v171 171)\n  (let v172 172)\n  (let v173 173)\n  (let v174 174)\n  (let v175 175)\n  (let v176 176)\n  (let v177 177)\n  (let v178 178)\n  (let v179 179)\n  (let v180 180)\n  (let v181 181)\n  (let v182 182)\n  (let v183 183)\n  (let v184 184)\n  (let v185 185)\n  (let v186 186)\n  (let v187 187)\n  (let v188 188)\n  (let v189 189)\n  (let v190 190)\n  (let v191 191)\n  (let v192 192)\n  (let v193 193)\n  (let v194 194)\n  (let v195 195)\n  (let v196 196)\n  (let v197 197)\n  (let v198 198)\n  (let v199 199)\n  (let v200 200)\n  (let v201 201)\n  (let v202 202)\n  (let v203 203)\n  (let v204 204)\n  (let v205 205)\n  (let v206 206)\n  (let v207 207)\n  (let v208 208)\n  (let v209 209)\n  (let v210 210)\n  (let v211 211)\n  (let v212 212)\n  (let v213 213)\n  (let v214 214)\n  (let v215 215)\n  (let v216 216)\n  (let v217 217)\n  (let v218 218)\n  (let v219 219)\n  (let v220 220)\n  (let v221 221)\n  (let v222 222)\n  (let v223 223)\n  (let v224 224)\n  (let v225 225)\n  (let v226 226)\n  (let v227 227)\n  (let v228 228)\n  (let v229 229)\n  (let v230 230)\n  (let v231 231)\n  (let v232 232)\n  (let v233 233)\n  (let v234 234)\n  (let v235 235)\n  (let v236 236)\n  (let v237 237)\n  (let v238 238)\n  (let v239 239)\n  (let v240 240)\n  (let v241 241)\n  (let v242 242)\n  (let v243 243)\n  (let v244 244)\n  (let v245 245)\n  (let v246 246)\n  (let v247 247)\n  (let v248 248)\n  (let v249 249)\n  (let v250 250)\n  (return 0))\n(fn main (argc argv)\n  (return 0))\n",
+      "substr": "too many locals",
+      "notes": "6 params + 251 lets = 257"
+    },
+    {
+      "name": "nesting_depth_129",
+      "src": "(fn main (argc argv)\n  (return (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg (neg 0)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))\n",
+      "substr": "expression nesting limit exceeded",
+      "notes": "literal at depth 129"
+    },
+    {
+      "name": "lone_minus_unknown",
+      "src": "(fn main (argc argv)\n  (return -))\n",
+      "substr": "unknown variable",
+      "notes": "lone - is an identifier"
+    },
+    {
+      "name": "double_minus_ident",
+      "src": "(fn main (argc argv)\n  (return --1))\n",
+      "substr": "unknown variable",
+      "notes": "--1 is an identifier, not a literal"
+    }
+  ],
+  "runtime": [
+    {
+      "name": "div_zero",
+      "src": "(fn main (argc argv)\n  (return (/ 1 0)))\n",
+      "exit": 120,
+      "notes": ""
+    },
+    {
+      "name": "mod_zero",
+      "src": "(fn main (argc argv)\n  (return (% 1 0)))\n",
+      "exit": 120,
+      "notes": "% traps exactly as /"
+    },
+    {
+      "name": "div_overflow",
+      "src": "(fn main (argc argv)\n  (return (/ -9223372036854775808 -1)))\n",
+      "exit": 121,
+      "notes": ""
+    },
+    {
+      "name": "mod_overflow",
+      "src": "(fn main (argc argv)\n  (return (% -9223372036854775808 -1)))\n",
+      "exit": 121,
+      "notes": ""
+    },
+    {
+      "name": "add_overflow",
+      "src": "(fn main (argc argv)\n  (return (+ 9223372036854775807 1)))\n",
+      "exit": 122,
+      "notes": ""
+    },
+    {
+      "name": "neg_overflow",
+      "src": "(fn main (argc argv)\n  (return (neg -9223372036854775808)))\n",
+      "exit": 122,
+      "notes": ""
+    },
+    {
+      "name": "mul_overflow",
+      "src": "(fn main (argc argv)\n  (return (* 4294967296 4294967296)))\n",
+      "exit": 122,
+      "notes": "2^32 * 2^32 = 2^64, overflow"
+    },
+    {
+      "name": "shift_64",
+      "src": "(fn main (argc argv)\n  (return (<< 1 64)))\n",
+      "exit": 123,
+      "notes": ""
+    },
+    {
+      "name": "shift_neg",
+      "src": "(fn main (argc argv)\n  (return (>> 1 -1)))\n",
+      "exit": 123,
+      "notes": ""
+    },
+    {
+      "name": "store_to_string_literal",
+      "src": "(fn main (argc argv)\n  (store8 \"hi\" 0 65)\n  (return 0))\n",
+      "exit": 139,
+      "notes": "string literals are read-only image bytes"
+    },
+    {
+      "name": "load_unmapped",
+      "src": "(fn main (argc argv)\n  (return (load8 0 0)))\n",
+      "exit": 139,
+      "notes": "unmapped pointer"
+    },
+    {
+      "name": "ltr_trap_before_rhs",
+      "src": "(fn main (argc argv)\n  (let x 0)\n  (return (+ (/ 1 0) (set x 1))))\n",
+      "exit": 120,
+      "notes": "LTR: trap before evaluating RHS; x stays 0 but we never return"
+    }
+  ],
+  "probes": [
+    {
+      "name": "uninitialized_local_after_untaken_let",
+      "src": "(fn main (argc argv)\n  (if 0 (block (let x 1)))\n  (return x))\n",
+      "notes": "x is in scope after the let in source order even if the branch never ran. Spec does not define the value. This oracle zero-fills slots \u2192 0."
+    },
+    {
+      "name": "let_self_reference",
+      "src": "(fn main (argc argv)\n  (return (let x x)))\n",
+      "notes": "Is the initializer in scope of the name? This oracle says yes (slot 0)."
+    },
+    {
+      "name": "string_identity",
+      "src": "(fn main (argc argv)\n  (return (== \"a\" \"a\")))\n",
+      "notes": "Equal literals: same address? Unspecified. This oracle does not intern \u2192 0."
+    },
+    {
+      "name": "empty_block_value",
+      "src": "(fn main (argc argv)\n  (return (block)))\n",
+      "notes": "\u00a710 empty block is unspecified. This oracle yields 0."
+    }
+  ]
+}

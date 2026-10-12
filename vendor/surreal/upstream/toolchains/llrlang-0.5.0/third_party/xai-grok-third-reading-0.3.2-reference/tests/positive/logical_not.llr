@@ -1,0 +1,2 @@
+(fn main (argc argv)
+  (return (+ (* 10 (! 0)) (! 5))))

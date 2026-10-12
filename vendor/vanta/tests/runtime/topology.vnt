@@ -1,0 +1,7 @@
+(fn main (argc argv)
+  (let d0 (domain-new 0 64))
+  (let d1 (domain-new 1 64))
+  (let t (topology-new))
+  (topology-add t d1)
+  (let p (mem-new 8 d0 7))
+  (return (mem-load64 t p 0)))

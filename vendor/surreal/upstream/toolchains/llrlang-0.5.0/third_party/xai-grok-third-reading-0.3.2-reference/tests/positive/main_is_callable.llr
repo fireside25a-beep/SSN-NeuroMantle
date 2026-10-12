@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  (if argc
+    (block (return 3))
+    (block (return 9))))

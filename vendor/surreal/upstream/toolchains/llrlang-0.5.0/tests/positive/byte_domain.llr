@@ -1,0 +1,11 @@
+(fn main (argc argv)
+  (let r (call llr_region_new 256))
+  (if (== r 0) (block (return 1)) (block))
+  (let i 0)
+  (while (< i 256)
+    (block
+      (call llr_region_set8 r i i)
+      (if (!= (call llr_region_get8 r i) i) (block (return 2)) (block))
+      (set i (+ i 1))))
+  (call llr_region_free r)
+  (return 0))

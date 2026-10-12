@@ -1,0 +1,2 @@
+(fn main (argc argv)
+  (return (syscall1 60 0)))

@@ -1,0 +1,8 @@
+/build/
+/dist/
+/bootstrap/llrc_stage0
+/bootstrap/llrc-stage*
+*.o
+*.log
+*.tmp
+.DS_Store

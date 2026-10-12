@@ -1,0 +1,8 @@
+(fn main (argc argv)
+  (let d (domain-new 0 4096))
+  (let t (topology-new))
+  (topology-add t d)
+  (let k (mem-new 128 d 3))
+  (let p (spatial-new))
+  (spatial-select t p k)
+  (return 0))

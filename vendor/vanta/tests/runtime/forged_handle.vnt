@@ -1,0 +1,10 @@
+(fn forge ()
+  (return 16385))
+
+(fn main (argc argv)
+  (let d (domain-new 0 128))
+  (let p (mem-new 8 d 7))
+  ; The function return type is intentionally unknown to the local static tagger.
+  ; Runtime nonce/kind validation must still reject this guessed legacy token.
+  (mem-free (call forge))
+  (return 0))

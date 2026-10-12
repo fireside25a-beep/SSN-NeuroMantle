@@ -1,0 +1,3 @@
+(fn main (argc argv)
+  (if 1 (block) (block (let x 42)))
+  (if (== x 0) (block (return 0)) (block (return 1))))

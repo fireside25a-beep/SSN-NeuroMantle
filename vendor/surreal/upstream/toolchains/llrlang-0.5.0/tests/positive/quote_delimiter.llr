@@ -1,0 +1,1 @@
+(fn main (argc argv) (syscall3 1 1"AB"2) (return 0))

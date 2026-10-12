@@ -1,0 +1,7 @@
+(fn main (argc argv)
+  (let p (syscall6 9 0 64 3 34 -1 0))
+  (let y (store8 p 0 300))
+  (let b (load8 p 0))
+  (return (if (== y 300)
+    (block (if (== b 44) (block 1) (block 2)))
+    (block 3))))

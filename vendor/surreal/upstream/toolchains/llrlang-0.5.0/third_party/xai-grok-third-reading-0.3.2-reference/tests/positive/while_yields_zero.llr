@@ -1,0 +1,7 @@
+(fn main (argc argv)
+  (let n 3)
+  (let s 0)
+  (while n (block
+    (set s (+ s n))
+    (set n (- n 1))))
+  (return (+ (* 100 s) (while 0 (block 1)))))

@@ -1,0 +1,3 @@
+(fn main (argc argv)
+  (let argc 1)
+  (return argc))

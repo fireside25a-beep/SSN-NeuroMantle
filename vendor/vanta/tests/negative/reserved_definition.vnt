@@ -1,0 +1,4 @@
+(fn __vanta_priv_mem_new (n d p)
+  (return 0))
+(fn main (argc argv)
+  (return 0))

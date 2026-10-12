@@ -1,0 +1,6 @@
+(fn helper (x)
+  (return (call main 0 0)))
+(fn main (argc argv)
+  (if argc
+    (block (return (call helper 0)))
+    (block (return 7))))

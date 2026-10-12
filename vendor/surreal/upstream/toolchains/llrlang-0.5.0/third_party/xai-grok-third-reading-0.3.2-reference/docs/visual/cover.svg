@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Third Reading">
+  <rect width="1200" height="630" fill="#F3EEE2"/>
+  <text x="72" y="72" fill="#B42318" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="18" letter-spacing="6">TR-032 · FOLIO 01 · READING III</text>
+  <rect x="72" y="108" width="220" height="2" fill="#B42318"/>
+  <text x="72" y="280" fill="#1A1612" font-family="Newsreader, Georgia, serif" font-size="92" font-weight="500">Third Reading</text>
+  <text x="72" y="340" fill="#3A342C" font-family="Newsreader, Georgia, serif" font-size="28" font-style="italic">An independent specification reading of LLRLANG 0.3.2</text>
+  <text x="72" y="560" fill="#6F6860" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="16" letter-spacing="3">53 + 46 + 12 + 4 · FINAL PASS · 2026-09-15</text>
+</svg>

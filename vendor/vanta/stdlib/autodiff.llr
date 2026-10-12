@@ -1,0 +1,64 @@
+; Forward-mode binary64 dual numbers. kind 7: [kind, value_bits, derivative_bits, 0...]
+
+(fn __vanta_priv_dual_slot (d)
+  (return (call __vanta_priv_slot d 7)))
+
+(fn __vanta_priv_dual_make (value deriv)
+  (let h (call __vanta_priv_alloc_slot 7))
+  (let p (call __vanta_priv_dual_slot h))
+  (store64 p 8 value)
+  (store64 p 16 deriv)
+  (return h))
+
+(fn __vanta_priv_dual_var (value)
+  (return (call __vanta_priv_dual_make value 4607182418800017408)))
+
+(fn __vanta_priv_dual_const (value)
+  (return (call __vanta_priv_dual_make value 0)))
+
+(fn __vanta_priv_dual_add (a b)
+  (let ap (call __vanta_priv_dual_slot a))
+  (let bp (call __vanta_priv_dual_slot b))
+  (return (call __vanta_priv_dual_make
+    (f64+ (load64 ap 8) (load64 bp 8))
+    (f64+ (load64 ap 16) (load64 bp 16)))))
+
+(fn __vanta_priv_dual_sub (a b)
+  (let ap (call __vanta_priv_dual_slot a))
+  (let bp (call __vanta_priv_dual_slot b))
+  (return (call __vanta_priv_dual_make
+    (f64- (load64 ap 8) (load64 bp 8))
+    (f64- (load64 ap 16) (load64 bp 16)))))
+
+(fn __vanta_priv_dual_mul (a b)
+  (let ap (call __vanta_priv_dual_slot a))
+  (let bp (call __vanta_priv_dual_slot b))
+  (let av (load64 ap 8))
+  (let ad (load64 ap 16))
+  (let bv (load64 bp 8))
+  (let bd (load64 bp 16))
+  (return (call __vanta_priv_dual_make
+    (f64* av bv)
+    (f64+ (f64* ad bv) (f64* av bd)))))
+
+(fn __vanta_priv_dual_div (a b)
+  (let ap (call __vanta_priv_dual_slot a))
+  (let bp (call __vanta_priv_dual_slot b))
+  (let av (load64 ap 8))
+  (let ad (load64 ap 16))
+  (let bv (load64 bp 8))
+  (let bd (load64 bp 16))
+  (let num (f64- (f64* ad bv) (f64* av bd)))
+  (let den (f64* bv bv))
+  (return (call __vanta_priv_dual_make (f64/ av bv) (f64/ num den))))
+
+(fn __vanta_priv_dual_value (d)
+  (return (load64 (call __vanta_priv_dual_slot d) 8)))
+
+(fn __vanta_priv_dual_grad (d)
+  (return (load64 (call __vanta_priv_dual_slot d) 16)))
+
+(fn __vanta_priv_dual_free (d)
+  (call __vanta_priv_dual_slot d)
+  (call __vanta_priv_clear_slot d)
+  (return 0))

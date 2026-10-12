@@ -1,0 +1,3 @@
+(fn main (argc argv)
+  1"AB"2
+  (return 0))

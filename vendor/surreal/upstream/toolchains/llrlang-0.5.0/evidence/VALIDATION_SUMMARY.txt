@@ -1,0 +1,135 @@
+BOOTSTRAP_PASS cc=gcc
+91372c3a46084d52068e03eeae9033099c0b003b4a20ba60fe64567fded7e845  build/gcc/llrc-stage0
+82fd5b163101c40360f64ec90c2cb84846bb9b427e7fc94335562f9da9089094  build/gcc/llrc-stage1
+82fd5b163101c40360f64ec90c2cb84846bb9b427e7fc94335562f9da9089094  build/gcc/llrc-stage2
+CROSS_SEED_ARTIFACT_IDENTITY_SKIP clang_not_found
+GCC_ASAN_UBSAN_SEED_PASS
+GCC_ANALYZER_PASS
+VERSION_PASS 0.5.0
+bin/llrc-linux-x86_64: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), statically linked, no section header
+ELF_STRUCTURE_PASS static_native_no_interp_nx_stack
+POSITIVE_PASS arithmetic artifact_sha256=76bf9337c45ed981c8adc0c32fa543fa8e2a8c08f62d7e80ac739caec29edcbc
+POSITIVE_PASS control artifact_sha256=c3eedd4dbf4ba98264ff0c45295fedfb665e9acc8751846ec54a9cdd5b013523
+POSITIVE_PASS calls artifact_sha256=c6a1e06a793f4be0790f44491fb0d9471f50f0a2622b3e2905ecd7ca3cad2f42
+POSITIVE_PASS syscalls artifact_sha256=fe8b30e6b5e77b5aa6f1fd70b438653a8413f5b84aa9c25374cf79a0e5f6593d
+POSITIVE_PASS strings artifact_sha256=ceb7d810e6a303d1d10cc6820ad55f591ec38d7eeda5d92105ca364a953ce643
+POSITIVE_PASS int_literals artifact_sha256=050710ce779e35b5f4748b0d848b1425c1ce18a625ee10fbfff1d3470912cd3a
+POSITIVE_PASS hello artifact_sha256=2255314466acc23f424f9c923c7ec3f807d8c8c99a45801c0086736439fa2eee
+POSITIVE_PASS factorial artifact_sha256=c9ca85848cfc0f72a888b911c45595150527e103f55541e50fe585d396e8cb73
+POSITIVE_PASS managed_memory artifact_sha256=210852851127dd7a48418b4bb26514daf8680c803110e1cc0dabda71ef1bc044
+POSITIVE_PASS process_pipe artifact_sha256=1ec55e3a360482d421fb9611fc8d596dc4ee205cf2fe819c55a2b96b197a785e
+POSITIVE_PASS byte_domain artifact_sha256=9338d163a859f68834948804b6b85b7997d3dc4f22d350e74a7ef732a49d2c18
+POSITIVE_PASS semantics_edges artifact_sha256=d705d5ce46a1e430df8e68b7dfc4e3b92d8bc04e18197d4f9a2e9106358c7156
+POSITIVE_PASS affine_fold artifact_sha256=933d2f8b5c6ac36575429cbaaef833ce4c82f5cf11ed26e9d4e7a7634c3487c4
+POSITIVE_PASS affine_nonmatch artifact_sha256=32e94402eea692b541f4dfd044e28f834b1034151ef07f920eae9e416fde9538
+POSITIVE_PASS affine_control_invalidation artifact_sha256=9f85b408e7c8696fe994d0d750c61453f7f886660b5ce6573b72d8cfd36e933d
+POSITIVE_PASS quote_delimiter artifact_sha256=ae8ee8e829b858803c622db73fdce3998d7aeeaead59be28237a471be17d0594
+POSITIVE_PASS nesting_depth_128 artifact_sha256=647688fe0e65f3de53f44178169a1eeeb7099a8d87d7a46f57bd01801e8dc9f8
+POSITIVE_PASS locals_with_params_256 artifact_sha256=cb27a9aa148499991d5617358c3a42b6d0622cef8049e150ac6c5ce03e927700
+POSITIVE_PASS conditional_let_if_zero artifact_sha256=55246a9c0700e50c963995117714ab65ffd9ec821c3c871dc4f9be268f6157a7
+POSITIVE_PASS conditional_let_else_zero artifact_sha256=0684880fc31ce4d40b9af7fb5b885eabf119267b1f47996d86527f1bd547a465
+POSITIVE_PASS conditional_let_while_zero artifact_sha256=aff9f55c1562601ed80bccb4a8005a1ea7fdd61b565a6b68434bad0d813b4111
+POSITIVE_PASS conditional_let_nested_zero artifact_sha256=9d7957d7e4623eefe97f4509c0f1990af9db56a02fb8f2e2d90ac8eab5f5f02a
+POSITIVE_PASS conditional_let_repeated_call artifact_sha256=f835ff3cdc2d296d026aa4a1a160094b5f4a0a1f5e89c74896fdfbfee89f7b07
+POSITIVE_PASS main_parameter_names artifact_sha256=576003b56c06e810eda3078100a491f04b874bd25d18e8f401ae30a383cd089f
+NEGATIVE_PASS llrc: tests/negative/bad_escape.llr:1:29: error: unsupported string escape
+NEGATIVE_PASS llrc: tests/negative/bad_main_arity.llr:1:1: error: main must accept exactly two parameters
+NEGATIVE_PASS llrc: tests/negative/duplicate_function.llr:2:5: error: duplicate function
+NEGATIVE_PASS llrc: tests/negative/duplicate_local.llr:1:37: error: duplicate local
+NEGATIVE_PASS llrc: tests/negative/if_extra_branch.llr:1:44: error: expected )
+NEGATIVE_PASS llrc: tests/negative/if_then_not_block.llr:1:28: error: expected (block ...)
+NEGATIVE_PASS llrc: tests/negative/int_overflow_neg.llr:1:30: error: integer literal overflow
+NEGATIVE_PASS llrc: tests/negative/int_overflow_pos.llr:1:30: error: integer literal overflow
+NEGATIVE_PASS llrc: tests/negative/let_self_reference.llr:2:10: error: unknown variable
+NEGATIVE_PASS llrc: tests/negative/let_shadows_parameter.llr:1:27: error: duplicate local
+NEGATIVE_PASS llrc: tests/negative/missing_main.llr:1:1: error: missing main function
+NEGATIVE_PASS llrc: tests/negative/nested_fn.llr:1:23: error: unknown form
+NEGATIVE_PASS llrc: tests/negative/nesting_depth_129.llr:1:411: error: expression nesting limit exceeded
+NEGATIVE_PASS llrc: tests/negative/plus_sign_literal.llr:1:30: error: unknown variable
+NEGATIVE_PASS llrc: tests/negative/return_without_value.llr:1:29: error: expected expression
+NEGATIVE_PASS llrc: tests/negative/syscall_arity.llr:1:42: error: syscall arity mismatch
+NEGATIVE_PASS llrc: tests/negative/too_many_locals_with_params.llr:252:14: error: too many locals
+NEGATIVE_PASS llrc: tests/negative/too_many_params.llr:1:20: error: functions support at most 6 parameters
+NEGATIVE_PASS llrc: tests/negative/unbalanced.llr:2:1: error: unbalanced parentheses
+NEGATIVE_PASS llrc: tests/negative/unknown_form.llr:1:23: error: unknown form
+NEGATIVE_PASS llrc: tests/negative/unknown_function.llr:1:36: error: unknown function
+NEGATIVE_PASS llrc: tests/negative/unknown_variable.llr:1:30: error: unknown variable
+NEGATIVE_PASS llrc: tests/negative/use_before_let.llr:1:30: error: unknown variable
+NEGATIVE_PASS llrc: tests/negative/while_body_not_block.llr:1:31: error: expected (block ...)
+NEGATIVE_PASS llrc: tests/negative/wrong_arity.llr:2:39: error: function arity mismatch
+NEGATIVE_CORPUS_PASS cases=25 diagnostics=identical
+MULTI_FILE_DIAGNOSTIC_PASS attribution=per_file
+RUNTIME_TRAP_PASS divzero.llr exit=120
+RUNTIME_TRAP_PASS div_overflow.llr exit=121
+RUNTIME_TRAP_PASS add_overflow.llr exit=122
+RUNTIME_TRAP_PASS sub_overflow.llr exit=122
+RUNTIME_TRAP_PASS mul_overflow.llr exit=122
+RUNTIME_TRAP_PASS affine_overflow_guard.llr exit=122
+RUNTIME_TRAP_PASS neg_overflow.llr exit=122
+RUNTIME_TRAP_PASS shift_negative.llr exit=123
+RUNTIME_TRAP_PASS shift_64.llr exit=123
+RUNTIME_TRAP_PASS memory_oob.llr exit=124
+RUNTIME_TRAP_PASS exit_status_low_byte.llr exit=2
+RUNTIME_TRAP_PASS stack_exhaustion.llr exit=139
+RUNTIME_TRAP_PASS store_to_string_literal.llr exit=139
+ORACLE_PASS arithmetic exit=0
+ORACLE_PASS control exit=0
+ORACLE_PASS calls exit=0
+ORACLE_PASS syscalls exit=0
+ORACLE_PASS strings exit=0
+ORACLE_PASS int_literals exit=0
+ORACLE_PASS hello exit=0
+ORACLE_PASS factorial exit=0
+ORACLE_PASS managed_memory exit=0
+ORACLE_PASS process_pipe exit=0
+ORACLE_PASS byte_domain exit=0
+ORACLE_PASS semantics_edges exit=0
+ORACLE_PASS affine_fold exit=0
+ORACLE_PASS affine_nonmatch exit=0
+ORACLE_PASS affine_control_invalidation exit=0
+ORACLE_PASS quote_delimiter exit=0
+ORACLE_PASS nesting_depth_128 exit=0
+ORACLE_PASS locals_with_params_256 exit=0
+ORACLE_PASS conditional_let_if_zero exit=0
+ORACLE_PASS conditional_let_else_zero exit=0
+ORACLE_PASS conditional_let_while_zero exit=0
+ORACLE_PASS conditional_let_nested_zero exit=0
+ORACLE_PASS conditional_let_repeated_call exit=0
+ORACLE_PASS main_parameter_names exit=0
+ORACLE_PASS trap_add_overflow exit=122
+ORACLE_PASS trap_affine_overflow_guard exit=122
+ORACLE_PASS trap_div_overflow exit=121
+ORACLE_PASS trap_divzero exit=120
+ORACLE_PASS trap_exit_status_low_byte exit=2
+ORACLE_PASS trap_memory_oob exit=124
+ORACLE_PASS trap_mul_overflow exit=122
+ORACLE_PASS trap_neg_overflow exit=122
+ORACLE_PASS trap_shift_64 exit=123
+ORACLE_PASS trap_shift_negative exit=123
+ORACLE_PASS trap_stack_exhaustion exit=139
+ORACLE_PASS trap_store_to_string_literal exit=139
+ORACLE_PASS trap_sub_overflow exit=122
+ORACLE_NEGATIVE_PASS cases=25
+ORACLE_SELF_COMPILE_PASS sha256=82fd5b163101c40360f64ec90c2cb84846bb9b427e7fc94335562f9da9089094
+MATH_EXHAUSTIVE_PASS pair_domain=1024 checks=16320 shift_cases=2048
+MATH_EXHAUSTIVE_ORACLE_PASS executor=interpreter
+DIFFERENTIAL_CORPUS_PASS templates=12 start=0 cases=32 accepted=18 rejected=14 oracle=interpreter lcg_seed=123456789
+DIFFERENTIAL_CORPUS_PASS templates=12 start=32 cases=32 accepted=17 rejected=15 oracle=interpreter lcg_seed=123456789
+DIFFERENTIAL_CORPUS_PASS templates=12 start=64 cases=32 accepted=12 rejected=20 oracle=interpreter lcg_seed=123456789
+DIFFERENTIAL_CORPUS_PASS templates=12 start=96 cases=32 accepted=19 rejected=13 oracle=interpreter lcg_seed=123456789
+DIFFERENTIAL_CORPUS_PASS templates=12 start=128 cases=32 accepted=18 rejected=14 oracle=interpreter lcg_seed=123456789
+DIFFERENTIAL_CORPUS_PASS templates=12 start=160 cases=32 accepted=18 rejected=14 oracle=interpreter lcg_seed=123456789
+DIFFERENTIAL_CORPUS_PASS templates=12 start=192 cases=32 accepted=21 rejected=11 oracle=interpreter lcg_seed=123456789
+DIFFERENTIAL_CORPUS_PASS templates=12 start=224 cases=32 accepted=17 rejected=15 oracle=interpreter lcg_seed=123456789
+DIFFERENTIAL_CORPUS_FULL_PASS cases=256 chunks=8 chunk_size=32
+FRESH_DIRECTORY_REPRO_PASS sha256=82fd5b163101c40360f64ec90c2cb84846bb9b427e7fc94335562f9da9089094
+REPEAT_SELF_COMPILE_PASS runs=20 unique_artifacts=1
+AFFINE_FORWARD_REVERSE_PASS count=20000000 seed=1 final=654669057 inverse=2128632005 recovered=1
+AFFINE_NATIVE_RESULT_PASS exit=1
+UNAFFECTED_BYTE_IDENTITY_PASS baseline=0.4.0 sha256=f3d9b261073a474f21d8270d5f5de0a52209a106571ecad3cd5576c331d0e999 bytes=4253
+AFFINE_FOLD_STRUCTURE_PASS no_imul_in_load_image
+REVERSE_VERIFICATION_PASS
+XAI_REFERENCE_MANIFEST_PASS restored_fixture_matches_supplied_hash
+XAI_REFERENCE_REPLAY_PASS authority=reference_only
+PLACEHOLDER_SCAN_PASS
+FINAL_VALIDATION_PASS compiler_sha256=82fd5b163101c40360f64ec90c2cb84846bb9b427e7fc94335562f9da9089094

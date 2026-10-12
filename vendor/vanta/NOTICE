@@ -1,0 +1,7 @@
+Vanta Native 1.0.0
+
+The bootstrap seed and the original self-hosting compiler foundation are derived from
+LLRLANG 0.5.0 and remain subject to the MIT license in LICENSE.
+
+The Vanta compiler/runtime additions in compiler/, stdlib/, examples/, tests/, scripts/
+and docs/ are part of this distribution under the same MIT terms.

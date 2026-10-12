@@ -1,0 +1,11 @@
+; FNV-1a over a capability, with explicit wrapping multiplication.
+(fn __vanta_priv_hash_mem64 (topo cap)
+  (let n (call __vanta_priv_mem_len cap))
+  (let i 0)
+  (let h -3750763034362895579)
+  (while (< i n)
+    (block
+      (set h (^ h (call __vanta_priv_mem_load8 topo cap i)))
+      (set h (wrap* h 1099511628211))
+      (set i (+ i 1))))
+  (return h))

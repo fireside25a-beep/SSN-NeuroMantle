@@ -1,0 +1,4 @@
+(fn f () (return 1))
+(fn f () (return 2))
+(fn main (argc argv)
+  (return 0))

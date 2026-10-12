@@ -1,0 +1,13 @@
+(fn main (argc argv)
+  (let i 0)
+  (let x 1)
+  (if (== argc 1)
+    (block (set x 2))
+    (block))
+  (while (< i 100)
+    (block
+      (set x (& (+ (* x 1664525) 1013904223) 2147483647))
+      (set i (+ i 1))))
+  (call llr_print_i64 x)
+  (call llr_write_all 1 "\n" 1)
+  (if (== x 2029549878) (block (return 0)) (block (return 2))))

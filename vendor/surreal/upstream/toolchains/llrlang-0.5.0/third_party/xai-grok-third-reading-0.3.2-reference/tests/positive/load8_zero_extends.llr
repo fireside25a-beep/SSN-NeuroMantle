@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  (let p (syscall6 9 0 64 3 34 -1 0))
+  (store8 p 0 255)
+  (return (load8 p 0)))

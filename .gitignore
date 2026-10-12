@@ -1,0 +1,10 @@
+/build/
+/bin/*
+!/bin/neuromantle
+/vendor/devcli/build/
+/vendor/devcli/bin/*
+!/vendor/devcli/bin/neuro
+/vendor/devcli/lib/
+/vendor/vanta/build/
+**/__pycache__/
+*.receipt

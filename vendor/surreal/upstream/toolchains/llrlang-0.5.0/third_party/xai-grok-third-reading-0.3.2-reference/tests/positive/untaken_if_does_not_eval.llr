@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  (let x 1)
+  (if 0 (block (set x (/ 1 0))) (block (set x 5)))
+  (return x))

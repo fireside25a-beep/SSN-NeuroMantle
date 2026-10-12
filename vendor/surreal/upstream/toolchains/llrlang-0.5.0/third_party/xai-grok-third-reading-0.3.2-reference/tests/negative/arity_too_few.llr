@@ -1,0 +1,3 @@
+(fn f (a b) (return a))
+(fn main (argc argv)
+  (return (call f 1)))

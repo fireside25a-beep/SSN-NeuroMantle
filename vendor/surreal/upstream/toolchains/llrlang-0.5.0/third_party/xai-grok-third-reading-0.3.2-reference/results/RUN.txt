@@ -1,0 +1,135 @@
+LLRLANG 0.3.2 — Grok third independent reading
+interpreter: review/reference/llri_grok.py
+written from LANGUAGE_REFERENCE.md 0.3.2
+
+== positive ==
+  PASS  hello_write                              exit   0  syscall write of a string literal
+  PASS  fallthrough_returns_zero                 exit   0  §10: body completing without return yields 0, not the last expr
+  PASS  last_expr_discarded                      exit   0  non-return body expressions are evaluated and discarded
+  PASS  explicit_return                          exit  42  
+  PASS  exit_status_low_byte                     exit   2  §8 low 8 bits; 258 -> 2
+  PASS  exit_status_negative                     exit 255  (return -1) exits 255
+  PASS  leading_zeros                            exit   7  007 is 7
+  PASS  minus_zero                               exit   0  -0 is 0
+  PASS  int64_min_literal                        exit 255  INT64_MIN is a single valid literal; SAR 63 -> -1 -> exit 255
+  PASS  int64_max_literal                        exit   7  
+  PASS  trunc_div_neg                            exit 253  trunc toward 0: -3, low 8 of -3 is 253
+  PASS  trunc_mod_neg                            exit 255  remainder sign of dividend: -1
+  PASS  div_pos_neg                              exit 253  7/-2 = -3
+  PASS  mod_pos_neg                              exit   1  7 % -2 = 1 (sign of dividend)
+  PASS  shl_no_trap                              exit 255  (<< 3 63) is INT64_MIN; SAR 63 is -1
+  PASS  logical_not                              exit  10  ! is logical, not bitwise; (! 0)=1, (! 5)=0
+  PASS  bitwise_not_via_xor                      exit 255  no ~ operator; (^ x -1) is bitwise complement
+  PASS  comparisons_are_01                       exit   4  
+  PASS  else_less_if_taken                       exit   7  else-less if with nonzero cond yields the block
+  PASS  else_less_if_untaken                     exit   0  else-less if with zero cond yields 0
+  PASS  if_else                                  exit   2  
+  PASS  while_yields_zero                        exit  88  while yields 0 even when body never runs; 3+2+1=6 so 600? wait s=6, + 0 = 6... 100*s = 600. Hmm I used 100*s + while = 600. exit low 8 of 600 = 88. 600&255=88 yes
+  PASS  let_set_yield                            exit   7  let and set yield the assigned value
+  PASS  params_are_locals                        exit   9  parameters may be assigned with set; assignment is local to the frame
+  PASS  forward_call                             exit   7  function inventory before evaluation; forward calls work
+  PASS  recursion_factorial                      exit   0  language snapshot from the project README
+  PASS  main_is_callable                         exit   3  argc is at least 1 so taken branch; main is ordinary
+  PASS  let_in_loop_reassigns                    exit   2  let inside loop declared once, re-executed assigns
+  PASS  block_does_not_scope                     exit  11  locals are function-scoped, not block-scoped
+  PASS  function_named_plus                      exit 100  builtin (+) and function named + are different namespaces; (call +) vs (+)
+  PASS  reserved_looking_names                   exit   9  no reserved words; if/fn are valid local names
+  PASS  quote_delimiter                          exit   0  1"AB"2 lexes as three tokens (int, string, int); body fall-through after evaluating them
+  PASS  empty_string_truthy                      exit   1  "" is a pointer, hence nonzero, hence true
+  PASS  store8_truncates_write_not_value         exit   1  store8 yields 300, writes 44 (300&255)
+  PASS  load8_zero_extends                       exit 255  255, not -1
+  PASS  ltr_eval_set                             exit  20  left-to-right: set x 10 yields 10, then x is 10, sum 20
+  PASS  untaken_if_does_not_eval                 exit   5  untaken branch is not evaluated (would trap)
+  PASS  bitwise_and_does_not_short_circuit       exit   1  & evaluates both operands
+  PASS  string_escape_newline                    exit   0  \n in a string is a line feed
+  PASS  nul_inside_string                        exit  98  \0 is a NUL inside the literal; byte after it is still there
+  PASS  call_main_from_helper                    exit   7  main may be called; helper calls main with argc=0
+  PASS  six_params                               exit  21  
+  PASS  cr_is_whitespace_same_line               exit   3  CR is whitespace and does not start a new line
+  PASS  dot_is_identifier_byte                   exit  12  foo.bar is one identifier, not member access
+  PASS  hex_looking_is_not_hex                   exit   4  0x10 is an identifier, not sixteen
+  PASS  unary_minus_is_neg                       exit 251  (- 5) would be arity error; unary is (neg 5) -> -5 -> 251
+  PASS  wrapping_address_add                     exit  77  load8 address is base+offset wrapping; here small and equal to +
+  PASS  locals_250_with_6_params                 exit 249  six params + 250 lets = 256 slots, accepted
+  PASS  nesting_depth_128                        exit   0  return + 126 neg + literal = depth 128, accepted; (neg 0)=0
+  PASS  empty_block_in_taken_if_zero_choice      exit   0  UNSPECIFIED empty block; this oracle yields 0 (gap probe living as a positive)
+  PASS  argc_at_least_1                          exit   1  
+  PASS  argv0_is_pointer                         exit   1  argv is a non-null pointer to the pointer table
+  52 passed, 0 failed / 52
+
+== negative ==
+  PASS  plus_as_identifier_literal               llri: plus_as_identifier_literal.llr:2:11: error: unknown variable
+  PASS  use_before_let                           llri: use_before_let.llr:2:11: error: unknown variable
+  PASS  use_before_let_in_untaken_branch         llri: use_before_let_in_untaken_branch.llr:2:24: error: unknown variable
+  PASS  let_shadows_param                        llri: let_shadows_param.llr:2:8: error: duplicate local
+  PASS  duplicate_let                            llri: duplicate_let.llr:3:15: error: duplicate local
+  PASS  extra_if_branch                          llri: extra_if_branch.llr:2:29: error: if has at most one else branch
+  PASS  non_block_then                           llri: non_block_then.llr:2:9: error: expected (block ...)
+  PASS  non_block_else                           llri: non_block_else.llr:2:19: error: expected (block ...)
+  PASS  non_block_while                          llri: non_block_while.llr:2:12: error: expected (block ...)
+  PASS  return_without_expr                      llri: return_without_expr.llr:2:4: error: return expects one expression
+  PASS  nested_fn                                llri: nested_fn.llr:2:4: error: unknown form
+  PASS  form_head_integer                        llri: form_head_integer.llr:2:4: error: expected form name
+  PASS  empty_form                               llri: empty_form.llr:2:3: error: expected form name
+  PASS  unknown_form                             llri: unknown_form.llr:2:4: error: unknown form
+  PASS  unknown_function                         llri: unknown_function.llr:2:17: error: unknown function
+  PASS  arity_too_few                            llri: arity_too_few.llr:3:20: error: function arity mismatch
+  PASS  arity_too_many                           llri: arity_too_many.llr:3:21: error: too many call arguments
+  PASS  duplicate_function                       llri: duplicate_function.llr:2:5: error: duplicate function
+  PASS  duplicate_param                          llri: duplicate_param.llr:1:10: error: duplicate parameter
+  PASS  seven_params                             llri: seven_params.llr:1:20: error: more than 6 parameters
+  PASS  missing_main                             llri: missing_main.llr:1:1: error: missing main function
+  PASS  main_one_param                           llri: main_one_param.llr:1:1: error: main must accept exactly (argc argv)
+  PASS  main_wrong_names                         llri: main_wrong_names.llr:1:1: error: main must accept exactly (argc argv)
+  PASS  unterminated_string                      llri: unterminated_string.llr:1:30: error: unterminated string literal
+  PASS  bad_escape                               llri: bad_escape.llr:2:11: error: unsupported or bad string escape
+  PASS  newline_in_string                        llri: newline_in_string.llr:2:15: error: newline in string literal
+  PASS  integer_overflow_literal                 llri: integer_overflow_literal.llr:2:11: error: integer literal overflow
+  PASS  integer_overflow_neg                     llri: integer_overflow_neg.llr:2:11: error: integer literal overflow
+  PASS  binary_extra_operand                     llri: binary_extra_operand.llr:2:19: error: + operand count
+  PASS  binary_missing_operand                   llri: binary_missing_operand.llr:2:15: error: + operand count
+  PASS  neg_extra                                llri: neg_extra.llr:2:19: error: neg operand count
+  PASS  unary_minus_form                         llri: unary_minus_form.llr:2:15: error: - operand count
+  PASS  syscall7_unknown                         llri: syscall7_unknown.llr:2:4: error: unknown form
+  PASS  syscall_arity                            llri: syscall_arity.llr:2:17: error: too many syscall arguments
+  PASS  unbalanced_paren                         llri: unbalanced_paren.llr:3:1: error: unbalanced parentheses
+  PASS  top_level_let                            llri: top_level_let.llr:1:1: error: top level expects (fn name (params...) ...)
+  PASS  if_no_then                               llri: if_no_then.llr:2:8: error: expected (block ...)
+  PASS  set_unknown                              llri: set_unknown.llr:2:8: error: set of unknown local
+  PASS  let_non_ident                            llri: let_non_ident.llr:2:8: error: let expects identifier
+  PASS  call_non_ident                           llri: call_non_ident.llr:2:17: error: call expects identifier
+  PASS  fn_name_integer                          llri: fn_name_integer.llr:1:5: error: function name must be identifier
+  PASS  backslash_at_end                         llri: backslash_at_end.llr:1:30: error: unsupported or bad string escape
+  PASS  too_many_locals_with_params              llri: too_many_locals_with_params.llr:252:16: error: too many locals
+  PASS  nesting_depth_129                        llri: nesting_depth_129.llr:2:642: error: expression nesting limit exceeded
+  PASS  lone_minus_unknown                       llri: lone_minus_unknown.llr:2:11: error: unknown variable
+  PASS  double_minus_ident                       llri: double_minus_ident.llr:2:11: error: unknown variable
+  46 passed, 0 failed / 46
+
+== runtime traps ==
+  PASS  div_zero                                 exit 120  
+  PASS  mod_zero                                 exit 120  % traps exactly as /
+  PASS  div_overflow                             exit 121  
+  PASS  mod_overflow                             exit 121  
+  PASS  add_overflow                             exit 122  
+  PASS  neg_overflow                             exit 122  
+  PASS  mul_overflow                             exit 122  2^32 * 2^32 = 2^64, overflow
+  PASS  shift_64                                 exit 123  
+  PASS  shift_neg                                exit 123  
+  PASS  store_to_string_literal                  exit 139  string literals are read-only image bytes
+  PASS  load_unmapped                            exit 139  unmapped pointer
+  PASS  ltr_trap_before_rhs                      exit 120  LTR: trap before evaluating RHS; x stays 0 but we never return
+  12 passed, 0 failed / 12
+
+== gap probes (recorded, not pass/fail against the spec) ==
+  RUN   uninitialized_local_after_untaken_let    kind=ok       exit=0    x is in scope after the let in source order even if the branch never ran. Spec does not define the value. This oracle zero-fills slots → 0.
+        oracle result: ok 0 stdout=b'' stderr=''
+  RUN   let_self_reference                       kind=ok       exit=0    Is the initializer in scope of the name? This oracle says yes (slot 0).
+        oracle result: ok 0 stdout=b'' stderr=''
+  RUN   string_identity                          kind=ok       exit=0    Equal literals: same address? Unspecified. This oracle does not intern → 0.
+        oracle result: ok 0 stdout=b'' stderr=''
+  RUN   empty_block_value                        kind=ok       exit=0    §10 empty block is unspecified. This oracle yields 0.
+        oracle result: ok 0 stdout=b'' stderr=''
+
+SUMMARY  positive 52/52  negative 46/46  runtime 12/12  probes 4
+FINAL  PASS

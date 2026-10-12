@@ -1,0 +1,230 @@
+; Independent bounded verifier for SURREAL SQECC001 certificates.
+; Exit 0 = valid [[n,1,3]] nondegenerate stabilizer proof profile.
+; Exit nonzero = rejected. Bounds: 2 <= n <= 20, m=n-1.
+
+(fn parity (x)
+  (set x (^ x (>> x 32)))
+  (set x (^ x (>> x 16)))
+  (set x (^ x (>> x 8)))
+  (set x (^ x (>> x 4)))
+  (set x (^ x (>> x 2)))
+  (set x (^ x (>> x 1)))
+  (return (& x 1)))
+
+(fn symp (ax az bx bz)
+  (return (call parity (^ (& ax bz) (& az bx)))))
+
+(fn gx (buf i) (return (load64 buf (+ 80 (* i 16)))))
+(fn gz (buf i) (return (load64 buf (+ 88 (* i 16)))))
+
+(fn comm_all (buf m x z)
+  (let i 0)
+  (while (< i m)
+    (block
+      (if (!= (call symp x z (call gx buf i) (call gz buf i)) 0)
+        (block (return 0)) (block))
+      (set i (+ i 1))))
+  (return 1))
+
+; Polynomial GF(2) elimination in bounded scratch space, independent of C++.
+; n <= 20 gives packed symplectic rows of at most 40 bits.
+(fn eliminate (buf m tx tz independence)
+  (let n (load64 buf 16))
+  (let target (| tx (<< tz n)))
+  (let i 0)
+  (while (< i m)
+    (block
+      (store64 buf (+ 2048 (* i 8)) (| (call gx buf i) (<< (call gz buf i) n)))
+      (set i (+ i 1))))
+  (let rank 0)
+  (let col 0)
+  (while (& (< col (* 2 n)) (< rank m))
+    (block
+      (let bit (<< 1 col))
+      (let pivot rank)
+      (while (& (< pivot m) (== (& (load64 buf (+ 2048 (* pivot 8))) bit) 0))
+        (block (set pivot (+ pivot 1))))
+      (if (< pivot m)
+        (block
+          (let row (load64 buf (+ 2048 (* pivot 8))))
+          (let old (load64 buf (+ 2048 (* rank 8))))
+          (store64 buf (+ 2048 (* pivot 8)) old)
+          (store64 buf (+ 2048 (* rank 8)) row)
+          (if (!= (& target bit) 0) (block (set target (^ target row))) (block))
+          (set i (+ rank 1))
+          (while (< i m)
+            (block
+              (let current (load64 buf (+ 2048 (* i 8))))
+              (if (!= (& current bit) 0)
+                (block (store64 buf (+ 2048 (* i 8)) (^ current row))) (block))
+              (set i (+ i 1))))
+          (set rank (+ rank 1)))
+        (block))
+      (set col (+ col 1))))
+  (if independence (block (return (== rank m))) (block))
+  (return (== target 0)))
+
+(fn in_span (buf m tx tz) (return (call eliminate buf m tx tz 0)))
+(fn generators_independent (buf m) (return (call eliminate buf m 0 0 1)))
+
+(fn errx (q kind)
+  (let b (<< 1 q))
+  (if (== kind 1) (block (return b)) (block))
+  (if (== kind 2) (block (return 0)) (block))
+  (return b))
+
+(fn errz (q kind)
+  (let b (<< 1 q))
+  (if (== kind 1) (block (return 0)) (block))
+  (if (== kind 2) (block (return b)) (block))
+  (return b))
+
+(fn syndrome (buf m x z)
+  (let s 0)
+  (let i 0)
+  (while (< i m)
+    (block
+      (if (!= (call symp x z (call gx buf i) (call gz buf i)) 0)
+        (block (set s (| s (<< 1 i)))) (block))
+      (set i (+ i 1))))
+  (return s))
+
+(fn popcount (x)
+  (let n 0)
+  (while (!= x 0)
+    (block
+      (set n (+ n (& x 1)))
+      (set x (>> x 1))))
+  (return n))
+
+(fn main (argc argv)
+  (if (!= argc 2) (block (return 2)) (block))
+  (let path (load64 argv 8))
+  (let fd (syscall2 2 path 657408))
+  (if (< fd 0) (block (return 3)) (block))
+  (let buf (syscall6 9 0 4096 3 34 -1 0))
+  (if (< buf 0) (block (syscall1 3 fd) (return 4)) (block))
+  (let got 0)
+  (let reading 1)
+  (while reading
+    (block
+      (let part (syscall3 0 fd (+ buf got) (- 4096 got)))
+      (if (== part -4) (block) (block
+        (if (< part 0) (block (syscall1 3 fd) (syscall2 11 buf 4096) (return 5)) (block))
+        (if (== part 0) (block (set reading 0)) (block (set got (+ got part))))))
+      (if (== got 4096) (block (syscall1 3 fd) (syscall2 11 buf 4096) (return 5)) (block))))
+  (syscall1 3 fd)
+  (if (< got 80) (block (syscall2 11 buf 4096) (return 5)) (block))
+
+  ; little-endian "SQECC001"
+  (if (!= (load64 buf 0) 3544385972190138707) (block (syscall2 11 buf 4096) (return 6)) (block))
+  (if (!= (load64 buf 8) 1) (block (syscall2 11 buf 4096) (return 7)) (block))
+  (let n (load64 buf 16))
+  (let m (load64 buf 24))
+  (if (| (< n 2) (> n 20)) (block (syscall2 11 buf 4096) (return 8)) (block))
+  (if (!= m (- n 1)) (block (syscall2 11 buf 4096) (return 9)) (block))
+  (if (!= got (+ 80 (* m 16))) (block (syscall2 11 buf 4096) (return 10)) (block))
+  (let limit (- (<< 1 n) 1))
+
+  (let lx (load64 buf 32))
+  (let lz (load64 buf 40))
+  (let zx (load64 buf 48))
+  (let zz (load64 buf 56))
+  (let wx (load64 buf 64))
+  (let wz (load64 buf 72))
+  (if (!= (| (| lx lz) (| zx zz)) (& (| (| lx lz) (| zx zz)) limit)) (block (syscall2 11 buf 4096) (return 11)) (block))
+  (if (!= (| wx wz) (& (| wx wz) limit)) (block (syscall2 11 buf 4096) (return 12)) (block))
+
+  ; Stabilizer bounds and pairwise commutation.
+  (let i 0)
+  (while (< i m)
+    (block
+      (let ix (call gx buf i))
+      (let iz (call gz buf i))
+      (if (== (| ix iz) 0) (block (syscall2 11 buf 4096) (return 13)) (block))
+      (if (!= (| ix iz) (& (| ix iz) limit)) (block (syscall2 11 buf 4096) (return 14)) (block))
+      (let j (+ i 1))
+      (while (< j m)
+        (block
+          (if (!= (call symp ix iz (call gx buf j) (call gz buf j)) 0)
+            (block (syscall2 11 buf 4096) (return 15)) (block))
+          (set j (+ j 1))))
+      (set i (+ i 1))))
+  (if (== (call generators_independent buf m) 0) (block (syscall2 11 buf 4096) (return 16)) (block))
+
+  ; Logical pair must normalize stabilizers, be outside the stabilizer, and anticommute.
+  (if (== (call comm_all buf m lx lz) 0) (block (syscall2 11 buf 4096) (return 17)) (block))
+  (if (== (call comm_all buf m zx zz) 0) (block (syscall2 11 buf 4096) (return 18)) (block))
+  (if (== (call symp lx lz zx zz) 0) (block (syscall2 11 buf 4096) (return 19)) (block))
+  (if (!= (call in_span buf m lx lz) 0) (block (syscall2 11 buf 4096) (return 20)) (block))
+  (if (!= (call in_span buf m zx zz) 0) (block (syscall2 11 buf 4096) (return 21)) (block))
+
+  ; Every weight-1 Pauli gets a nonzero unique syndrome.
+  (let q 0)
+  (while (< q n)
+    (block
+      (let k 1)
+      (while (<= k 3)
+        (block
+          (let ex (call errx q k))
+          (let ez (call errz q k))
+          (let s (call syndrome buf m ex ez))
+          (if (== s 0) (block (syscall2 11 buf 4096) (return 22)) (block))
+          (let q2 0)
+          (while (<= q2 q)
+            (block
+              (let k2 1)
+              (while (<= k2 3)
+                (block
+                  (if (| (< q2 q) (< k2 k))
+                    (block
+                      (if (== s (call syndrome buf m (call errx q2 k2) (call errz q2 k2)))
+                        (block (syscall2 11 buf 4096) (return 23)) (block)))
+                    (block))
+                  (set k2 (+ k2 1))))
+              (set q2 (+ q2 1))))
+          (set k (+ k 1))))
+      (set q (+ q 1))))
+
+  ; No non-stabilizer normalizer element of weight 1 or 2: distance >= 3.
+  (set q 0)
+  (while (< q n)
+    (block
+      (let k3 1)
+      (while (<= k3 3)
+        (block
+          (let ex1 (call errx q k3))
+          (let ez1 (call errz q k3))
+          (if (& (!= (call comm_all buf m ex1 ez1) 0) (== (call in_span buf m ex1 ez1) 0))
+            (block (syscall2 11 buf 4096) (return 24)) (block))
+          (set k3 (+ k3 1))))
+      (set q (+ q 1))))
+
+  (let a 0)
+  (while (< a n)
+    (block
+      (let b (+ a 1))
+      (while (< b n)
+        (block
+          (let ka 1)
+          (while (<= ka 3)
+            (block
+              (let kb 1)
+              (while (<= kb 3)
+                (block
+                  (let ex2 (^ (call errx a ka) (call errx b kb)))
+                  (let ez2 (^ (call errz a ka) (call errz b kb)))
+                  (if (& (!= (call comm_all buf m ex2 ez2) 0) (== (call in_span buf m ex2 ez2) 0))
+                    (block (syscall2 11 buf 4096) (return 25)) (block))
+                  (set kb (+ kb 1))))
+              (set ka (+ ka 1))))
+          (set b (+ b 1))))
+      (set a (+ a 1))))
+
+  ; Explicit weight-3 logical witness: distance <= 3.
+  (if (!= (call popcount (| wx wz)) 3) (block (syscall2 11 buf 4096) (return 26)) (block))
+  (if (== (call comm_all buf m wx wz) 0) (block (syscall2 11 buf 4096) (return 27)) (block))
+  (if (!= (call in_span buf m wx wz) 0) (block (syscall2 11 buf 4096) (return 28)) (block))
+
+  (syscall2 11 buf 4096)
+  (return 0))

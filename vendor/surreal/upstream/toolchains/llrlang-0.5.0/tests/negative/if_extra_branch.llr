@@ -1,0 +1,1 @@
+(fn main (argc argv) (if 1 (block) (block) (block)) (return 0))

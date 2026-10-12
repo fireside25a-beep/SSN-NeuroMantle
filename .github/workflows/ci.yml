@@ -1,0 +1,28 @@
+name: Native verification
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  x86:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - run: sudo apt-get update && sudo apt-get install -y build-essential clang python3 binutils
+      - run: make test
+      - run: make -C vendor/devcli test
+      - run: make vanta-check
+      - run: make companions
+      - run: make qecc-check
+      - run: ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make sanitize
+  arm64:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - run: sudo apt-get update && sudo apt-get install -y build-essential python3
+      - run: make test
+  clang:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - run: sudo apt-get update && sudo apt-get install -y clang build-essential python3
+      - run: make CC=clang CXX=clang++ test

@@ -1,0 +1,3 @@
+(fn main (argc argv)
+  (domain-new 0 -1)
+  (return 0))

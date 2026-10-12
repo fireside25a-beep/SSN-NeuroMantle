@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  (let t (topology-new))
+  (let p (mem-new 8 t 7))
+  (return p))

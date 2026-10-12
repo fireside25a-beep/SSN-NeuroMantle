@@ -1,0 +1,39 @@
+; LLRLANG native Linux x86-64 I/O helpers
+(fn llr_write_all (fd p n)
+  (let off 0)
+  (while (< off n)
+    (block
+      (let r (syscall3 1 fd (+ p off) (- n off)))
+      (if (<= r 0) (block (return -1)) (block))
+      (set off (+ off r))))
+  (return 0))
+
+(fn llr_print (p)
+  (return (call llr_write_all 1 p (call llr_strlen p))))
+
+(fn llr_println (p)
+  (if (!= (call llr_print p) 0) (block (return -1)) (block))
+  (return (call llr_write_all 1 "\n" 1)))
+
+(fn llr_print_i64 (x)
+  (let b (syscall6 9 0 64 3 34 -1 0))
+  (if (< b 0) (block (return -1)) (block))
+  (let i 63)
+  (let v x)
+  (let wasneg 0)
+  (if (< v 0) (block (set wasneg 1)) (block))
+  (if (> v 0) (block (set v (neg v))) (block))
+  (if (== v 0)
+    (block (set i (- i 1)) (store8 b i 48))
+    (block
+      (while (!= v 0)
+        (block
+          (let rem (% v 10))
+          (let digit (neg rem))
+          (set i (- i 1))
+          (store8 b i (+ 48 digit))
+          (set v (/ v 10))))))
+  (if (== wasneg 1) (block (set i (- i 1)) (store8 b i 45)) (block))
+  (let r (call llr_write_all 1 (+ b i) (- 63 i)))
+  (syscall2 11 b 64)
+  (return r))

@@ -1,0 +1,6 @@
+(fn main (argc argv)
+  (let d0 (domain-new 0 64))
+  (let d1 (domain-new 1 64))
+  (let f (fabric-new))
+  (let p (mem-new 8 d0 7))
+  (return (mem-transfer p d1 f)))

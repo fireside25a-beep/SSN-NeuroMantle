@@ -1,0 +1,6 @@
+(fn factorial (n)
+  (if (<= n 1)
+    (block (return 1))
+    (block (return (* n (call factorial (- n 1)))))))
+(fn main (argc argv)
+  (return (- (call factorial 5) 120)))

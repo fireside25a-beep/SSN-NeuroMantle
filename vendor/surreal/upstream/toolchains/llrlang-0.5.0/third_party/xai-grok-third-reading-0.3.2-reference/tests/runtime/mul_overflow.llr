@@ -1,0 +1,2 @@
+(fn main (argc argv)
+  (return (* 4294967296 4294967296)))

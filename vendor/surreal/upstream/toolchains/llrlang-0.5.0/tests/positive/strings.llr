@@ -1,0 +1,8 @@
+(fn slen (p)
+  (let n 0)
+  (while (!= (load8 p n) 0) (block (set n (+ n 1))))
+  (return n))
+(fn main (argc argv)
+  (let s "A\nB\tC\"\\")
+  (syscall3 1 1 s (call slen s))
+  (return 0))

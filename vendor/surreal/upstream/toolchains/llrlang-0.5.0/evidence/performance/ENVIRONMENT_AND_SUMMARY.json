@@ -1,0 +1,12 @@
+{
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+  "python": "3.12.14",
+  "clang": null,
+  "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "llrlang_runtime_median_ms": 0.166636,
+  "fastest_local_clang": null,
+  "fastest_local_clang_median_ms": null,
+  "llrlang_speedup_vs_fastest_local_clang": null,
+  "bounded_comparison": "NOT_RUN",
+  "note": "This is one recognized constant affine recurrence benchmark. It is not a universal claim that LLRLANG outruns Clang on arbitrary programs."
+}

@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  (let x 1)
+  (let y (+ (set x 10) x))
+  (return y))

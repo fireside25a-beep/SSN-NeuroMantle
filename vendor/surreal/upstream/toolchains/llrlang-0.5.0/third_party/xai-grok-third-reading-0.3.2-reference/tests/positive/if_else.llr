@@ -1,0 +1,2 @@
+(fn main (argc argv)
+  (return (if 0 (block 1) (block 2))))

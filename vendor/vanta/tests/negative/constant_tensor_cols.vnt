@@ -1,0 +1,4 @@
+(fn main (argc argv)
+(let d (domain-new 0 4096))
+  (tensor-new2 2 -1 d)
+  (return 0))

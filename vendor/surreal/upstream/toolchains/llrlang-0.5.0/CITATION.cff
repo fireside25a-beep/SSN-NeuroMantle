@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: LLRLANG
+message: If you use this software in research, cite this repository and release.
+type: software
+authors:
+  - family-names: Moraru
+    given-names: Alexandru
+version: 0.5.0
+date-released: 2026-09-14
+license: MIT

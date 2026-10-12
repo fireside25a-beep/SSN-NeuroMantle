@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  ; Successful return with a live resource must be converted into a leak trap.
+  (let d (domain-new 0 64))
+  (return 0))

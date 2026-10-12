@@ -1,0 +1,13 @@
+# Security scope
+
+NeuroMantle reads local scenario files and executes a deterministic CPU simulation. The core does not access a network or load a model. It uses checked arithmetic and stages transitions before commit, but its C/C++ implementation is not formally verified. Receipts prove consistency with this executable and input under replay; an attacker who can replace both the executable and receipt can fabricate a matching run.
+
+`dev`, `compile-vanta`, and `surreal` explicitly launch bundled companion tools. DevCLI project build/run commands can execute project-supplied code with the caller's permissions. Run untrusted projects in an operating-system sandbox. The included Surreal and Vanta binaries target Linux x86-64; the native core source is tested under GCC locally and has CI jobs for Clang and ARM.
+
+The `module` directive executes the named program in a seccomp-filtered child. File mutation, sockets, process creation and other listed syscalls are refused; inherited descriptors are closed and the environment is cleared. A two-second deadline and bounded stdout also apply. The filter does not hide readable host files, so use a container or virtual machine with an explicit read-only mount set for code that must not see caller data. A module file digest does not cover an interpreter, shared libraries or other input files. See [SANDBOX.md](docs/SANDBOX.md).
+
+`ai-run` uses the same process filter. Its 120-second deadline, 64 KiB response cap, strict canonical stimulus parser and file hash constrain the request boundary. Socket creation and connection are refused. `ai-run-socket` connects to an explicitly named local Unix stream in the parent and gives only that descriptor to the adapter as FD 3. This allows communication with, and possible disclosure to, that named service. The scenario bytes are sent to standard input. `ai-verify` reuses the recorded proposal and checks its executable file hash; `ai-verify-live` reruns it, reconnecting to the recorded service when present. Neither check hashes model weights, a service binary, an interpreter, a tokenizer or external retrieval data.
+
+The optional SECDED checkpoint corrects a single bit per encoded word and detects double-bit faults; it does not cover arbitrary multi-bit corruption, the router or the executable's address space. The QECC gate checks a five-qubit code certificate but does not put classical spike state into quantum memory.
+
+Report vulnerabilities privately to the repository maintainer before publishing exploit details. Include a reproducible input, build command and affected commit or archive digest.

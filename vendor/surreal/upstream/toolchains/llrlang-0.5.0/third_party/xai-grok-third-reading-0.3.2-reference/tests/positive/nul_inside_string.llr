@@ -1,0 +1,3 @@
+(fn main (argc argv)
+  (let p "a\0b")
+  (return (load8 p 2)))

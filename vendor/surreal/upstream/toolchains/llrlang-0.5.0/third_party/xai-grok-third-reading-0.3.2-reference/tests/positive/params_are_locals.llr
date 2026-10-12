@@ -1,0 +1,5 @@
+(fn bump (x)
+  (set x (+ x 1))
+  (return x))
+(fn main (argc argv)
+  (return (call bump 8)))

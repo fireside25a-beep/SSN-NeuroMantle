@@ -1,0 +1,8 @@
+(fn sum6 (a b c d e f)
+  (return (+ (+ (+ a b) (+ c d)) (+ e f))))
+(fn fact (n)
+  (if (<= n 1) (block (return 1)) (block (return (* n (call fact (- n 1)))))))
+(fn main (argc argv)
+  (if (!= (call sum6 1 2 3 4 5 6) 21) (block (return 1)) (block))
+  (if (!= (call fact 10) 3628800) (block (return 2)) (block))
+  (return 0))

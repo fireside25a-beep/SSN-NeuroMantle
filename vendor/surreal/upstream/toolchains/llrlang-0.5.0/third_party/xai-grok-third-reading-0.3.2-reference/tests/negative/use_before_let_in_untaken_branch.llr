@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  (if 0 (block (return x)))
+  (let x 1)
+  (return 0))

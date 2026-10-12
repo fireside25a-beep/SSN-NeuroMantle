@@ -1,0 +1,6 @@
+(fn main (argc argv)
+  (let a -9223372036854775808)
+  (let b 9223372036854775807)
+  (if (!= a -9223372036854775808) (block (return 1)) (block))
+  (if (!= b 9223372036854775807) (block (return 2)) (block))
+  (return 0))

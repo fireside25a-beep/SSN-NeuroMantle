@@ -1,0 +1,3 @@
+(fn main (argc argv)
+  (let foo.bar 12)
+  (return foo.bar))

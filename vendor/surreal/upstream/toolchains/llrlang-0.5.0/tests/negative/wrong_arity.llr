@@ -1,0 +1,2 @@
+(fn f (x y) (return (+ x y)))
+(fn main (argc argv) (return (call f 1)))

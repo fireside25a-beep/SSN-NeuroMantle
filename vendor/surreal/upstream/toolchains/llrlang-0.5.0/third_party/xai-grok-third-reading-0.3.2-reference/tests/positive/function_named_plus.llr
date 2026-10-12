@@ -1,0 +1,4 @@
+(fn + (a b)
+  (return 99))
+(fn main (argc argv)
+  (return (+ (call + 1 2) 1)))

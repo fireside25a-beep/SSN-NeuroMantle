@@ -1,0 +1,70 @@
+name: Bug report
+description: Report a reproducible compiler, runtime, bootstrap, or verification issue.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an LLRLANG issue. Please keep the report reproducible and separate compiler bugs from intentionally unsafe raw-memory/syscall behavior.
+  - type: input
+    id: version
+    attributes:
+      label: LLRLANG version
+      placeholder: "0.4.0"
+    validations:
+      required: true
+  - type: input
+    id: host
+    attributes:
+      label: Host
+      description: Linux distribution, architecture, and relevant compiler/tool versions.
+      placeholder: "Ubuntu 24.04, x86-64, gcc 14, clang 18"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Compiler / diagnostics
+        - Bootstrap / self-hosting
+        - Native runtime / traps
+        - Managed memory library
+        - Reference interpreter / semantic oracle
+        - Reproducibility / release tooling
+        - Documentation / specification
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction
+      description: Include the smallest source and exact command that reproduces the issue.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: Include stdout, stderr, exit status, and hashes when relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      description: State the behavior you expected and the specification section if applicable.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I checked the current language reference and implementation-status documents.
+          required: true
+        - label: I can reproduce this from a clean checkout or release archive.
+          required: true

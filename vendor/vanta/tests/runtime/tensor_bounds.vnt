@@ -1,0 +1,6 @@
+(fn main (argc argv)
+  (let d (domain-new 0 128))
+  (let t (topology-new))
+  (topology-add t d)
+  (let a (tensor-new2 2 2 d))
+  (return (tensor-get64 t a 2 0)))

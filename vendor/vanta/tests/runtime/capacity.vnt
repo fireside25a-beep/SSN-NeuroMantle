@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  (let d (domain-new 0 8))
+  (let p (mem-new 16 d 7))
+  (return p))

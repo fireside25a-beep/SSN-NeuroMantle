@@ -1,0 +1,4 @@
+(fn main (argc argv)
+(let d (domain-new 0 4096))
+  (vec-new 0 d)
+  (return 0))

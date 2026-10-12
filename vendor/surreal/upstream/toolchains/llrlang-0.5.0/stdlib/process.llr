@@ -1,0 +1,22 @@
+; Native process and pipe message primitives.
+(fn llr_load_u32 (p off)
+  (let b0 (load8 p off))
+  (let b1 (load8 p (+ off 1)))
+  (let b2 (load8 p (+ off 2)))
+  (let b3 (load8 p (+ off 3)))
+  (return (| (| b0 (<< b1 8)) (| (<< b2 16) (<< b3 24)))))
+
+(fn llr_pipe_new ()
+  (let p (syscall6 9 0 8 3 34 -1 0))
+  (if (< p 0) (block (return 0)) (block))
+  (let r (syscall2 293 p 0))
+  (if (< r 0) (block (syscall2 11 p 8) (return 0)) (block))
+  (return p))
+
+(fn llr_pipe_read_fd (p) (return (call llr_load_u32 p 0)))
+(fn llr_pipe_write_fd (p) (return (call llr_load_u32 p 4)))
+(fn llr_fork () (return (syscall0 57)))
+(fn llr_close (fd) (return (syscall1 3 fd)))
+(fn llr_wait (pid statusp) (return (syscall4 61 pid statusp 0 0)))
+(fn llr_send (fd p n) (return (call llr_write_all fd p n)))
+(fn llr_recv (fd p n) (return (syscall3 0 fd p n)))

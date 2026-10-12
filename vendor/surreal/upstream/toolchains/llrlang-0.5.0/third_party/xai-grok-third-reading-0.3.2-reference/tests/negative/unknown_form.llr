@@ -1,0 +1,3 @@
+(fn main (argc argv)
+  (foo 1)
+  (return 0))

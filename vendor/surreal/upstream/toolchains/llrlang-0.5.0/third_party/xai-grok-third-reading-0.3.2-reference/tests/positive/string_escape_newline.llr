@@ -1,0 +1,3 @@
+(fn main (argc argv)
+  (syscall3 1 1 "a\nb" 3)
+  (return 0))

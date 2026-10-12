@@ -1,0 +1,2 @@
+(fn main (argc argv)
+  (return (if 1 (block 7))))

@@ -1,0 +1,8 @@
+(fn factorial (n)
+  (if (<= n 1)
+    (block (return 1))
+    (block (return (* n (call factorial (- n 1)))))))
+
+(fn main (argc argv)
+  (let x (call factorial 10))
+  (if (== x 3628800) (block (return 0)) (block (return 1))))

@@ -1,0 +1,40 @@
+; Semantic edge probes: each line prints one result via llr_print_i64.
+(fn emit (x) (call llr_print_i64 x) (call llr_write_all 1 "\n" 1) (return x))
+(fn pair (a b) (return (+ (* a 10) b)))
+(fn depth (n) (if (== n 0) (block (return 0)) (block (return (+ 1 (call depth (- n 1)))))))
+(fn main (argc argv)
+  ; 1. argument evaluation order for call and binary ops
+  (call pair (call emit 1) (call emit 2))
+  (call emit (- (call emit 3) (call emit 4)))
+  ; 2. division/remainder truncate toward zero
+  (call emit (/ -7 2)) (call emit (/ 7 -2)) (call emit (% -7 2)) (call emit (% 7 -2))
+  ; 3. left shift wraps without trap
+  (call emit (<< 1 63)) (call emit (<< 3 63)) (call emit (<< -1 1))
+  ; 4. right shift is arithmetic
+  (call emit (>> -8 1)) (call emit (>> -1 63))
+  ; 5. store8 truncates to the low byte
+  (let r (syscall6 9 0 16 3 34 -1 0))
+  (store8 r 0 300) (store8 r 1 -1) (call emit (load8 r 0)) (call emit (load8 r 1))
+  ; 6. unaligned load64/store64 are permitted
+  (store64 r 3 -2) (call emit (load64 r 3))
+  ; 7. literal forms: leading zeros, negative zero, extremes
+  (call emit 007) (call emit -0) (call emit 9223372036854775807) (call emit -9223372036854775808)
+  ; 8. let inside a loop re-executes as assignment
+  (let i 0) (let acc 0)
+  (while (< i 3) (block (let tmp (* i 2)) (set acc (+ acc tmp)) (set i (+ i 1))))
+  (call emit acc)
+  ; 9. values of statement forms
+  (call emit (let v 5)) (call emit (set v 6)) (call emit (block 1 2 3))
+  (call emit (if 0 (block 9))) (call emit (if 1 (block 9) (block 8))) (call emit (while 0 (block)))
+  ; 10. boolean results are exactly 0/1, ! of nonzero is 0
+  (call emit (< 1 2)) (call emit (! 7)) (call emit (! 0)) (call emit (== -1 -1))
+  ; 11. bitwise on negatives
+  (call emit (& -1 255)) (call emit (| -256 15)) (call emit (^ -1 0))
+  ; 12. recursion depth 2000
+  (call emit (call depth 2000))
+  ; 13. syscall returns negative errno unchanged
+  (call emit (syscall1 3 -5))
+  ; 14. argc is at least 1
+  (call emit (>= argc 1))
+
+  (return 0))

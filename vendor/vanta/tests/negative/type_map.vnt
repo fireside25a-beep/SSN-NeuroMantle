@@ -1,0 +1,4 @@
+(fn main (argc argv)
+  (let d (domain-new 0 64))
+  (map-free d)
+  (return 0))

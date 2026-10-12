@@ -1,0 +1,8 @@
+(fn main (argc argv)
+  (let d (domain-new 0 128))
+  (let cpu (topology-new))
+  (topology-add cpu d)
+  (let v (vec-new 1 d))
+  (vec-push cpu v 7)
+  (vec-get cpu v 1)
+  (return 0))

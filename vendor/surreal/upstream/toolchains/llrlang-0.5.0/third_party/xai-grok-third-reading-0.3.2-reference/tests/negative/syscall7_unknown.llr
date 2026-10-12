@@ -1,0 +1,3 @@
+(fn main (argc argv)
+  (syscall7 1)
+  (return 0))

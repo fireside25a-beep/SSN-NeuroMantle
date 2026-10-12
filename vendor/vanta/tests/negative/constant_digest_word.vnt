@@ -1,0 +1,8 @@
+(fn main (argc argv)
+(let d (domain-new 0 4096))
+(let t (topology-new))
+(topology-add t d)
+(let m (mem-new 8 d 7))
+(let h (sha256-mem t m))
+  (sha256-word h 8)
+  (return 0))

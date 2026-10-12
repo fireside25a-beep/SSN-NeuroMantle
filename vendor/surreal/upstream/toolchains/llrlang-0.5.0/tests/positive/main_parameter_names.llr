@@ -1,0 +1,2 @@
+(fn main (count vector)
+  (if (> count 0) (block (return 0)) (block (return 1))))

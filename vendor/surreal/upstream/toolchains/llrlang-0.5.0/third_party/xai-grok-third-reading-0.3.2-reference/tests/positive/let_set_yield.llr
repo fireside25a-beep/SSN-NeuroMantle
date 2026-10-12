@@ -1,0 +1,2 @@
+(fn main (argc argv)
+  (return (+ (let a 3) (set a 4))))

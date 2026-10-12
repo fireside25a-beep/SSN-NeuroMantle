@@ -1,0 +1,3 @@
+(fn main (argc argv)
+  (let x 0)
+  (return (+ (/ 1 0) (set x 1))))
